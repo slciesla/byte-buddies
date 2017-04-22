@@ -1,1 +1,20 @@
-<p>Test</p>
+<div>
+  Do thingssssss
+  <br/>
+  <br/>
+<form [formGroup]="form">
+<input type="text" placeholder="Name" formControlName="name">
+<input type="text" placeholder="Init Cost" formControlName="initCost">
+<input type="text" placeholder="Min Price" formControlName="minPrice">
+<input type="text" placeholder="Mature Time" formControlName="matureTime">
+<input type="text" placeholder="Death Rate" formControlName="deathRate">
+<br/>
+<br/>
+<input type="text" placeholder="Required CPU" formControlName="requiredCPU">
+<input type="text" placeholder="Cost to Collect" formControlName="collectCost">
+<br/>
+<br/>
+<label>Submit</label>
+<img src="assets/rabbyte-center.png" (click)="Save()" width="25px" height="25px">
+</form>
+</div>

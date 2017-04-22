@@ -1,9 +1,20 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule, Routes } from '@angular/router';
 import { ButtonsModule } from '@progress/kendo-angular-buttons';
+import { LayoutModule } from '@progress/kendo-angular-layout';
+import {
+  MdlDialogOutletModule,
+  MdlDialogOutletService,
+  MdlSnackbaModule,
+  MdlSnackbarComponent,
+  MdlSnackbarService
+} from '@angular-mdl/core';
+import { AngularFireModule } from 'angularfire2';
+
 
 import { AppComponent } from './app.component';
 import { AdminComponent } from './admin/admin.component';
@@ -16,6 +27,16 @@ const routes: Routes = [
 
 export const routing: ModuleWithProviders = RouterModule.forRoot(routes);
 
+// Must export the config
+export const firebaseConfig = {
+  apiKey: 'AIzaSyDrZ3z0I2O_J5kj8hIdbUK7Mg5J88LgNKA',
+  authDomain: 'byte-buddies.firebaseapp.com',
+  databaseURL: 'https://byte-buddies.firebaseio.com',
+  projectId: 'byte-buddies',
+  storageBucket: 'byte-buddies.appspot.com',
+  messagingSenderId: '6117024891'
+};
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -24,12 +45,24 @@ export const routing: ModuleWithProviders = RouterModule.forRoot(routes);
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
     HttpModule,
     routing,
-    ButtonsModule
+    ButtonsModule,
+    ReactiveFormsModule,
+    LayoutModule,
+    MdlDialogOutletModule,
+    MdlSnackbaModule,
+    AngularFireModule.initializeApp(firebaseConfig)
   ],
-  providers: [],
+  entryComponents: [
+    MdlSnackbarComponent
+  ],
+  providers: [
+    MdlDialogOutletService,
+    MdlSnackbarService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
