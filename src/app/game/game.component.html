@@ -7,7 +7,11 @@
       <kendo-tabstrip-tab [title]="'Hard Drive'" [selected]="true">
         <ng-template kendoTabContent>
           <canvas #hddCanvas width="{{canvasWidth}}" height="{{canvasHeight}}" style="background: #AAAAAA; border:2px solid #666666;"></canvas>
-          <div *ngIf="selectedBuddy" style="width: 100%">
+          <div>
+            <button kendoButton (click)="sellAllBuddies(false)" [primary]="true">Sell All Mature</button>
+            <button kendoButton (click)="sellAllBuddies(true)" [primary]="true">Sell All Worth 2x</button>
+          </div>
+          <div *ngIf="selectedBuddy">
             <h3>Selected Buddy</h3>
             <div>Age: {{selectedBuddy.age}}</div>
             <div>Sell Price: {{selectedBuddy.sellPrice}}</div>
@@ -18,7 +22,7 @@
       <kendo-tabstrip-tab [title]="'Solid State Drive'">
         <ng-template kendoTabContent>
           <canvas #ssdCanvas width="{{canvasWidth}}" height="{{canvasHeight}}" style="background: #EEEEAA; border:2px solid #AAAA77;"></canvas>
-          <div *ngIf="selectedSsdBuddy" style="width: 100%">
+          <div *ngIf="selectedSsdBuddy">
             <h3>Selected Buddy</h3>
             <div>Age: {{selectedSsdBuddy.age}}</div>
           </div>
