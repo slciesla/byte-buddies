@@ -11,4 +11,6 @@ export class Buddy {
       initCost: number;
       deathRate: number;
       requiredCPU: number;
+      height: number;
+      width: number;
 }

@@ -37,11 +37,13 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.byteBuddies.ssdBuddies = new Array<Buddy>();
 
     this.buddyService.getAll().subscribe(buddies => {
-      this.allBuddies = buddies;
-      this.byteBuddies.buddies.push({ ...buddies[0] });
-      this.byteBuddies.buddies[0].age = 0;
-      this.byteBuddies.buddies[0].xPos = Math.floor(Math.random() * 375);
-      this.byteBuddies.buddies[0].yPos = Math.floor(Math.random() * 475);
+      if (!this.allBuddies) {
+        this.allBuddies = buddies;
+        this.byteBuddies.buddies.push({ ...buddies[0] });
+        this.byteBuddies.buddies[0].age = 0;
+        this.byteBuddies.buddies[0].xPos = Math.floor(Math.random() * 375);
+        this.byteBuddies.buddies[0].yPos = Math.floor(Math.random() * 475);
+      }
     });
 
     // Jeremys Code
@@ -99,19 +101,26 @@ export class GameComponent implements OnInit, AfterViewInit {
       }
 
       img.src = buddy.img;
-      ctx.drawImage(img, buddy.xPos, buddy.yPos, 25, 25);
+      buddy.width = 36;
+      buddy.height = 42;
+      if (buddy.age > buddy.matureTime) {
+        const mod = img.width / 25;
+        buddy.width = Math.floor(img.width / mod);
+        buddy.height = Math.floor(img.height / mod);
+      }
+      ctx.drawImage(img, buddy.xPos, buddy.yPos, buddy.width, buddy.height);
       if (buddy.age >= buddy.matureTime) {
         const x = buddy.xPos + Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
         const y = buddy.yPos + Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
-        if (x + 25 > this.canvasWidth) {
-          buddy.xPos = this.canvasWidth - 25;
+        if (x + buddy.width > this.canvasWidth) {
+          buddy.xPos = this.canvasWidth - buddy.width;
         } else if (x < 0) {
           buddy.xPos = 0;
         } else {
           buddy.xPos = x;
         }
-        if (y + 25 > this.canvasHeight) {
-          buddy.yPos = this.canvasHeight - 25;
+        if (y + buddy.height > this.canvasHeight) {
+          buddy.yPos = this.canvasHeight - buddy.height;
         } else if (y < 0) {
           buddy.yPos = 0;
         } else {
@@ -127,18 +136,25 @@ export class GameComponent implements OnInit, AfterViewInit {
       this.calculatePrice(buddy);
       const img = new Image();
       img.src = buddy.img;
-      ctx.drawImage(img, buddy.xPos, buddy.yPos, 25, 25);
+      buddy.width = 36;
+      buddy.height = 42;
+      if (buddy.age > buddy.matureTime) {
+        const mod = img.width / 25;
+        buddy.width = Math.floor(img.width / mod);
+        buddy.height = Math.floor(img.height / mod);
+      }
+      ctx.drawImage(img, buddy.xPos, buddy.yPos, buddy.width, buddy.height);
       const x = buddy.xPos + Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
       const y = buddy.yPos + Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
-      if (x + 25 > this.canvasWidth) {
-        buddy.xPos = this.canvasWidth - 25;
+      if (x + buddy.width > this.canvasWidth) {
+        buddy.xPos = this.canvasWidth - buddy.width;
       } else if (x < 0) {
         buddy.xPos = 0;
       } else {
         buddy.xPos = x;
       }
-      if (y + 25 > this.canvasHeight) {
-        buddy.yPos = this.canvasHeight - 25;
+      if (y + buddy.height > this.canvasHeight) {
+        buddy.yPos = this.canvasHeight - buddy.height;
       } else if (y < 0) {
         buddy.yPos = 0;
       } else {
@@ -152,9 +168,11 @@ export class GameComponent implements OnInit, AfterViewInit {
     const x = e.clientX - Math.floor(rect.left);
     const y = e.clientY - Math.floor(rect.top);
     if (type === 'hdd') {
-      this.selectedBuddy = this.byteBuddies.buddies.find(b => b.xPos < x && x < b.xPos + 25 && b.yPos < y && y < b.yPos + 25);
+      this.selectedBuddy = this.byteBuddies.buddies.find(b =>
+        b.xPos < x && x < b.xPos + b.width && b.yPos < y && y < b.yPos + b.height);
     } else if (type === 'ssd') {
-      this.selectedSsdBuddy = this.byteBuddies.ssdBuddies.find(b => b.xPos < x && x < b.xPos + 25 && b.yPos < y && y < b.yPos + 25);
+      this.selectedSsdBuddy = this.byteBuddies.ssdBuddies.find(b =>
+        b.xPos < x && x < b.xPos + b.width && b.yPos < y && y < b.yPos + b.height);
     }
   }
 
