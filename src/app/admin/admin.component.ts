@@ -32,7 +32,7 @@ export class AdminComponent implements OnInit {
 
   Save() {
     const toSend = this.af.database.object(`/buddies/`);
-       // toSend.set()
+      toSend.set(this.form.value);
   }
 
   constructor(public fb: FormBuilder, public af: AngularFire) { }
