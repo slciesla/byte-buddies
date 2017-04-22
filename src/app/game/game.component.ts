@@ -36,7 +36,7 @@ export class GameComponent implements OnInit, AfterViewInit {
 
     const rabbyte = new Buddy();
     rabbyte.id = 1;
-    rabbyte.name = 'Ammobyte';
+    rabbyte.name = 'red';
     rabbyte.basePrice = 2;
     rabbyte.matureAge = 20;
     rabbyte.initCost = 1;
@@ -84,7 +84,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       buddy.age++;
       this.calculatePrice(buddy);
       const img = new Image();
-      buddy.img = 'assets/' + buddy.name;
+      buddy.img = 'assets/' + (buddy.age < buddy.matureAge ? 'egg' : buddy.name);
       switch (buddy.age % 4) {
         case 0:
           buddy.img += '1.png';
@@ -100,21 +100,23 @@ export class GameComponent implements OnInit, AfterViewInit {
       }
       img.src = buddy.img;
       ctx.drawImage(img, buddy.xPos, buddy.yPos, 25, 25);
-      const x = buddy.xPos + Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
-      const y = buddy.yPos + Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
-      if (x + 25 > this.canvasWidth) {
-        buddy.xPos = this.canvasWidth - 25;
-      } else if (x < 0) {
-        buddy.xPos = 0;
-      } else {
-        buddy.xPos = x;
-      }
-      if (y + 25 > this.canvasHeight) {
-        buddy.yPos = this.canvasHeight - 25;
-      } else if (y < 0) {
-        buddy.yPos = 0;
-      } else {
-        buddy.yPos = y;
+      if (buddy.age >= buddy.matureAge) {
+        const x = buddy.xPos + Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
+        const y = buddy.yPos + Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
+        if (x + 25 > this.canvasWidth) {
+          buddy.xPos = this.canvasWidth - 25;
+        } else if (x < 0) {
+          buddy.xPos = 0;
+        } else {
+          buddy.xPos = x;
+        }
+        if (y + 25 > this.canvasHeight) {
+          buddy.yPos = this.canvasHeight - 25;
+        } else if (y < 0) {
+          buddy.yPos = 0;
+        } else {
+          buddy.yPos = y;
+        }
       }
     });
 
