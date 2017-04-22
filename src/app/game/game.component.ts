@@ -102,17 +102,17 @@ export class GameComponent implements OnInit, AfterViewInit {
       this.nextGpu = gpus[nextIndex];
     });
 
-    // this.af.database.list('/components/RAM/').subscribe((rams: ComputerComponent[]) => {
-    //   this.allRams = rams.sort((a, b) => {
-    //     if (a.$key === b.$key) { return 0; };
-    //     return +a.$key < +b.$key ? -1 : 1;
-    //   });
-    //   if (newGame || !this.byteBuddies.ram) {
-    //     this.byteBuddies.ram = rams[0];
-    //   }
-    // const nextIndex
-    //   this.nextRam = rams[rams.findIndex(c => c.$key === this.byteBuddies.ram.$key) + 1];
-    // });
+    this.af.database.list('/components/RAM/').subscribe((rams: ComputerComponent[]) => {
+      this.allRams = rams.sort((a, b) => {
+        if (a.$key === b.$key) { return 0; };
+        return +a.$key < +b.$key ? -1 : 1;
+      });
+      if (newGame || !this.byteBuddies.ram) {
+        this.byteBuddies.ram = rams[0];
+      }
+    const nextIndex = rams.findIndex(c => c.$key === this.byteBuddies.ram.$key) + 1;
+      this.nextRam = rams[nextIndex];
+    });
 
     // Jeremys Code
 
