@@ -4,8 +4,10 @@ export class Buddy {
       img: string;
       xPos: number;
       yPos: number;
-      age: number;
+      age = 0;
       basePrice: number;
-      sellPrice: number;
+      sellPrice = 0;
       matureAge: number;
+      collectCost: number;
+      initCost: number;
 }

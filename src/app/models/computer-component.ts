@@ -1,8 +1,9 @@
 export class ComputerComponent {
-    id: number;
+    key: string;
     name: string;
     desc: string;
     price: number;
+    level: number;
     type: ComputerComponentType;
 }
 

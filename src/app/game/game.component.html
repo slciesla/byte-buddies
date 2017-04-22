@@ -1,13 +1,44 @@
+<div class="header">
+  Byte Buddies - {{byteBuddies?.byteCoins}} ByteCoins - <span class="golden-bits">{{byteBuddies?.goldenBits}} Golden Bits</span>
+</div>
 <div style="min-height: 575px;">
   <div class="col-sm-6" style="float: left;">
-    <h3>Hard Drive</h3>
-    <canvas #hddCanvas width="{{canvasWidth}}" height="{{canvasHeight}}" style="background: #AAAAAA; border:2px solid #666666;"></canvas>
+    <kendo-tabstrip [keepTabContent]="true">
+      <kendo-tabstrip-tab [title]="'Hard Drive'" [selected]="true">
+        <ng-template kendoTabContent>
+          <canvas #hddCanvas width="{{canvasWidth}}" height="{{canvasHeight}}" style="background: #AAAAAA; border:2px solid #666666;"></canvas>
+          <div *ngIf="selectedBuddy" style="width: 100%">
+            <h3>Selected Buddy</h3>
+            <div>Age: {{selectedBuddy.age}}</div>
+            <div>Sell Price: {{selectedBuddy.sellPrice}}</div>
+            <button kendoButton (click)="sellBuddy()" [primary]="true" [disabled]="selectedBuddy.sellPrice === 0">Sell?</button>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+      <kendo-tabstrip-tab [title]="'Solid State Drive'">
+        <ng-template kendoTabContent>
+          <canvas #ssdCanvas width="{{canvasWidth}}" height="{{canvasHeight}}" style="background: #EEEEAA; border:2px solid #AAAA77;"></canvas>
+          <div *ngIf="selectedSsdBuddy" style="width: 100%">
+            <h3>Selected Buddy</h3>
+            <div>Age: {{selectedSsdBuddy.age}}</div>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+    </kendo-tabstrip>
   </div>
   <div class="col-sm-6" style="padding-left: 5%; float: left;">
-    ByteCoins: {{byteBuddies?.byteCoins}}
     <kendo-tabstrip>
       <kendo-tabstrip-tab [title]="'Byte Buddies'" [selected]="true">
         <ng-template kendoTabContent>
+          <div *ngFor="let buddy of allBuddies">
+            <div>
+              <img [src]="buddy.img" width="25" height="25"> {{buddy.name}}
+            </div>
+            <div>
+              <button kendoButton (click)="buyBuddy(buddy)" [primary]="true" [disabled]="buddy.initCost > byteBuddies.byteCoins">Buy for {{buddy.initCost}}bytc</button>
+              <button kendoButton (click)="collectBuddy(buddy)" [disabled]="buddy.collectCost > byteBuddies.goldenBits" class="golden-bits">Collect for {{buddy.collectCost}}gb</button>
+            </div>
+          </div>
         </ng-template>
       </kendo-tabstrip-tab>
       <kendo-tabstrip-tab [title]="'Upgrades'">
@@ -28,10 +59,4 @@
       </kendo-tabstrip-tab>
     </kendo-tabstrip>
   </div>
-</div>
-<div *ngIf="selectedBuddy" style="width: 100%">
-  <h3>Selected Buddy</h3>
-  <div>Age: {{selectedBuddy.age}}</div>
-  <div>Sell Price: {{selectedBuddy.sellPrice}}</div>
-  <button kendoButton (click)="sellBuddy()" [primary]="true" [disabled]="selectedBuddy.sellPrice === 0">Sell?</button>
 </div>
