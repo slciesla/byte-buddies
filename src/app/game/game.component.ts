@@ -32,7 +32,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.byteBuddies = new ByteBuddies();
     this.byteBuddies.byteCoins = 0;
-    this.byteBuddies.goldenBits = 0;
+    this.byteBuddies.goldenBits = 1;
     this.byteBuddies.buddies = new Array<Buddy>();
     this.byteBuddies.ssdBuddies = new Array<Buddy>();
 
@@ -135,6 +135,25 @@ export class GameComponent implements OnInit, AfterViewInit {
       buddy.age++;
       this.calculatePrice(buddy);
       const img = new Image();
+      if (buddy.age > buddy.matureTime - 2 && buddy.age <= buddy.matureTime) {
+        buddy.img = 'assets/eggcracking.png';
+      } else {
+        buddy.img = 'assets/' + (buddy.age < buddy.matureTime ? 'egg' : buddy.name);
+        switch (buddy.age % 4) {
+          case 0:
+            buddy.img += '1.png';
+            break;
+          case 1:
+          case 3:
+            buddy.img += '2.png';
+            break;
+          case 2:
+          default:
+            buddy.img += '3.png';
+            break;
+        }
+      }
+
       img.src = buddy.img;
       buddy.width = 36;
       buddy.height = 42;
@@ -144,21 +163,23 @@ export class GameComponent implements OnInit, AfterViewInit {
         buddy.height = Math.floor(img.height / mod);
       }
       ctx.drawImage(img, buddy.xPos, buddy.yPos, buddy.width, buddy.height);
-      const x = buddy.xPos + Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
-      const y = buddy.yPos + Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
-      if (x + buddy.width > this.canvasWidth) {
-        buddy.xPos = this.canvasWidth - buddy.width;
-      } else if (x < 0) {
-        buddy.xPos = 0;
-      } else {
-        buddy.xPos = x;
-      }
-      if (y + buddy.height > this.canvasHeight) {
-        buddy.yPos = this.canvasHeight - buddy.height;
-      } else if (y < 0) {
-        buddy.yPos = 0;
-      } else {
-        buddy.yPos = y;
+      if (buddy.age >= buddy.matureTime) {
+        const x = buddy.xPos + Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
+        const y = buddy.yPos + Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
+        if (x + buddy.width > this.canvasWidth) {
+          buddy.xPos = this.canvasWidth - buddy.width;
+        } else if (x < 0) {
+          buddy.xPos = 0;
+        } else {
+          buddy.xPos = x;
+        }
+        if (y + buddy.height > this.canvasHeight) {
+          buddy.yPos = this.canvasHeight - buddy.height;
+        } else if (y < 0) {
+          buddy.yPos = 0;
+        } else {
+          buddy.yPos = y;
+        }
       }
     });
   }
@@ -183,24 +204,44 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   sellBuddy() {
-    this.snackbarService.showToast('Sold ' + this.selectedBuddy.name + ' for ' + this.selectedBuddy.sellPrice + 'bytc', 2500);
     this.byteBuddies.buddies.splice(this.byteBuddies.buddies.findIndex(b =>
       b.xPos === this.selectedBuddy.xPos &&
       b.yPos === this.selectedBuddy.yPos &&
       b.age === this.selectedBuddy.age), 1);
     this.byteBuddies.byteCoins += this.selectedBuddy.sellPrice;
+    const goldenChance = +this.selectedBuddy.minPrice / 10;
+    let numGoldens = Math.floor(goldenChance / 100);
+    if (Math.random() <= goldenChance) {
+      numGoldens++;
+    }
+    this.byteBuddies.goldenBits += numGoldens;
+    this.snackbarService.showToast('Sold ' + this.selectedBuddy.name + ' for ' + this.selectedBuddy.sellPrice +
+      'bytc' + (numGoldens > 0 ? (' and ' + numGoldens + ' gb') : ''), 2500);
     this.selectedBuddy = undefined;
   }
 
   sellAllBuddies(worthDouble: boolean) {
+    let totalBytc = 0;
+    let totalGoldens = 0;
     const buddiesToSell = this.byteBuddies.buddies.filter(b => b.sellPrice >= (worthDouble ? +b.minPrice * 2 : 1));
+    const totalBuddies = buddiesToSell.length;
     if (buddiesToSell.length > 0) {
       buddiesToSell.forEach(b => {
         this.byteBuddies.buddies.splice(this.byteBuddies.buddies.findIndex(b2 =>
           b2.xPos === b.xPos && b2.yPos === b.yPos && b2.age === b.age), 1);
         this.byteBuddies.byteCoins += b.sellPrice;
+        totalBytc += b.sellPrice;
+        const goldenChance = +b.minPrice / 10;
+        let numGoldens = Math.floor(goldenChance / 100);
+        if (Math.random() <= goldenChance) {
+          numGoldens++;
+        }
+        totalGoldens += numGoldens;
+        this.byteBuddies.goldenBits += numGoldens;
       });
       this.selectedBuddy = undefined;
+      this.snackbarService.showToast('Sold ' + totalBuddies + ' buddies for ' + totalBytc +
+        'bytc' + (totalGoldens > 0 ? (' and ' + totalGoldens + ' gb') : ''), 2500);
     }
   }
 
