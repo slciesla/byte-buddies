@@ -3,6 +3,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule, Routes } from '@angular/router';
+import { ButtonsModule } from '@progress/kendo-angular-buttons';
 
 import { AppComponent } from './app.component';
 import { AdminComponent } from './admin/admin.component';
@@ -23,6 +24,7 @@ export const routing: ModuleWithProviders = RouterModule.forRoot(routes);
     FormsModule,
     HttpModule,
     routing
+    ButtonsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
