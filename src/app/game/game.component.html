@@ -1,3 +1,15 @@
-<p>
-  game works!
-</p>
+<div style="height: 550px; width: 100%;">
+  <div width="40%" style="float: left;">
+    <h3>Hard Drive</h3>
+    <canvas #hddCanvas width="{{canvasWidth}}" height="{{canvasHeight}}" style="background: #AAAAAA; border:2px solid #666666;"></canvas>
+  </div>
+  <div width="50%" style="padding-left: 5%; float: left;">
+    <h3>Upgrades</h3>
+  </div>
+</div>
+<div *ngIf="selectedBuddy" style="width: 100%">
+  <h3>Selected Buddy</h3>
+  <div>Age: {{selectedBuddy.age}}</div>
+  <div>Sell Price: {{selectedBuddy.sellPrice}}</div>
+  <button>Sell?</button>
+</div>
