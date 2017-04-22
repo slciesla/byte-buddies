@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MdlSnackbarService } from '@angular-mdl/core';
 import { ByteBuddies } from '../models/byte-buddies';
 import { Buddy } from '../models/buddy';
+import { BuddyService } from '../services/buddy.service';
 
 @Component({
   selector: 'app-game',
@@ -25,7 +26,8 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   // End
 
-  constructor(private snackbarService: MdlSnackbarService) { }
+  constructor(private snackbarService: MdlSnackbarService,
+    private buddyService: BuddyService) { }
 
   ngOnInit() {
     this.byteBuddies = new ByteBuddies();
@@ -34,20 +36,13 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.byteBuddies.buddies = new Array<Buddy>();
     this.byteBuddies.ssdBuddies = new Array<Buddy>();
 
-    const rabbyte = new Buddy();
-    rabbyte.id = 1;
-    rabbyte.name = 'red';
-    rabbyte.basePrice = 2;
-    rabbyte.matureAge = 20;
-    rabbyte.initCost = 1;
-    rabbyte.collectCost = 1;
-
-    this.allBuddies = new Array<Buddy>();
-    this.allBuddies.push({ ...rabbyte });
-
-    rabbyte.xPos = Math.floor(Math.random() * 400);
-    rabbyte.yPos = Math.floor(Math.random() * 400);
-    this.byteBuddies.buddies.push(rabbyte);
+    this.buddyService.getAll().subscribe(buddies => {
+      this.allBuddies = buddies;
+      this.byteBuddies.buddies.push({ ...buddies[0] });
+      this.byteBuddies.buddies[0].age = 0;
+      this.byteBuddies.buddies[0].xPos = Math.floor(Math.random() * 375);
+      this.byteBuddies.buddies[0].yPos = Math.floor(Math.random() * 475);
+    });
 
     // Jeremys Code
 
@@ -84,23 +79,28 @@ export class GameComponent implements OnInit, AfterViewInit {
       buddy.age++;
       this.calculatePrice(buddy);
       const img = new Image();
-      buddy.img = 'assets/' + (buddy.age < buddy.matureAge ? 'egg' : buddy.name);
-      switch (buddy.age % 4) {
-        case 0:
-          buddy.img += '1.png';
-          break;
-        case 1:
-        case 3:
-          buddy.img += '2.png';
-          break;
-        case 2:
-        default:
-          buddy.img += '3.png';
-          break;
+      if (buddy.age > buddy.matureTime - 2 && buddy.age <= buddy.matureTime) {
+        buddy.img = 'assets/eggcracking.png';
+      } else {
+        buddy.img = 'assets/' + (buddy.age < buddy.matureTime ? 'egg' : buddy.name);
+        switch (buddy.age % 4) {
+          case 0:
+            buddy.img += '1.png';
+            break;
+          case 1:
+          case 3:
+            buddy.img += '2.png';
+            break;
+          case 2:
+          default:
+            buddy.img += '3.png';
+            break;
+        }
       }
+
       img.src = buddy.img;
       ctx.drawImage(img, buddy.xPos, buddy.yPos, 25, 25);
-      if (buddy.age >= buddy.matureAge) {
+      if (buddy.age >= buddy.matureTime) {
         const x = buddy.xPos + Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
         const y = buddy.yPos + Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
         if (x + 25 > this.canvasWidth) {
@@ -158,16 +158,15 @@ export class GameComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private calculatePrice(buddy: any) {
-    buddy.sellPrice = buddy.age > buddy.matureAge ?
-      Math.floor(buddy.basePrice + Math.log(Math.ceil((buddy.age - buddy.matureAge) / 25))) :
+  private calculatePrice(buddy: Buddy) {
+    buddy.sellPrice = buddy.age > buddy.matureTime ?
+      Math.floor(+buddy.minPrice + Math.log(Math.ceil((buddy.age - buddy.matureTime) / 25))) :
       0;
   }
 
   sellBuddy() {
     this.snackbarService.showToast('Sold ' + this.selectedBuddy.name + ' for ' + this.selectedBuddy.sellPrice + 'bytc', 2500);
     this.byteBuddies.buddies.splice(this.byteBuddies.buddies.findIndex(b =>
-      b.id === this.selectedBuddy.id &&
       b.xPos === this.selectedBuddy.xPos &&
       b.yPos === this.selectedBuddy.yPos &&
       b.age === this.selectedBuddy.age), 1);
@@ -176,11 +175,11 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   sellAllBuddies(worthDouble: boolean) {
-    const buddiesToSell = this.byteBuddies.buddies.filter(b => b.sellPrice >= (worthDouble ? b.basePrice * 2 : 1));
+    const buddiesToSell = this.byteBuddies.buddies.filter(b => b.sellPrice >= (worthDouble ? b.sellPrice * 2 : 1));
     if (buddiesToSell.length > 0) {
       buddiesToSell.forEach(b => {
         this.byteBuddies.buddies.splice(this.byteBuddies.buddies.findIndex(b2 =>
-          b2.id === b.id && b2.xPos === b.xPos && b2.yPos === b.yPos && b2.age === b.age), 1);
+          b2.xPos === b.xPos && b2.yPos === b.yPos && b2.age === b.age), 1);
         this.byteBuddies.byteCoins += b.sellPrice;
       });
       this.selectedBuddy = undefined;
@@ -190,16 +189,18 @@ export class GameComponent implements OnInit, AfterViewInit {
   buyBuddy(buddy: Buddy) {
     this.byteBuddies.byteCoins -= buddy.initCost;
     const bought = { ...buddy };
-    bought.xPos = Math.floor(Math.random() * 400);
-    bought.yPos = Math.floor(Math.random() * 400);
+    bought.age = 0;
+    bought.xPos = Math.floor(Math.random() * 375);
+    bought.yPos = Math.floor(Math.random() * 475);
     this.byteBuddies.buddies.push(bought);
   }
 
   collectBuddy(buddy: Buddy) {
     this.byteBuddies.goldenBits -= buddy.collectCost;
     const bought = { ...buddy };
-    bought.xPos = Math.floor(Math.random() * 400);
-    bought.yPos = Math.floor(Math.random() * 400);
+    bought.age = 0;
+    bought.xPos = Math.floor(Math.random() * 375);
+    bought.yPos = Math.floor(Math.random() * 475);
     this.byteBuddies.ssdBuddies.push(bought);
   }
 

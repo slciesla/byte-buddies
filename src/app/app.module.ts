@@ -19,6 +19,7 @@ import { AngularFireModule } from 'angularfire2';
 import { AppComponent } from './app.component';
 import { AdminComponent } from './admin/admin.component';
 import { GameComponent } from './game/game.component';
+import { BuddyService } from './services/buddy.service';
 
 const routes: Routes = [
   { path: '', component: GameComponent },
@@ -61,7 +62,8 @@ export const firebaseConfig = {
   ],
   providers: [
     MdlDialogOutletService,
-    MdlSnackbarService
+    MdlSnackbarService,
+    BuddyService
   ],
   bootstrap: [AppComponent]
 })
