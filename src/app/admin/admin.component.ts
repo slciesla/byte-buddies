@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { AngularFire, FirebaseObjectObservable } from 'angularfire2';
+import { AngularFire, FirebaseListObservable } from 'angularfire2';
+import { MdlSnackbarService } from '@angular-mdl/core';
 
 @Component({
   selector: 'app-admin',
@@ -9,7 +10,7 @@ import { AngularFire, FirebaseObjectObservable } from 'angularfire2';
 })
 export class AdminComponent implements OnInit {
 
-  item: FirebaseObjectObservable<any>;
+  item: FirebaseListObservable<any>;
 
   public form: FormGroup;
   public name = new FormControl();
@@ -17,7 +18,8 @@ export class AdminComponent implements OnInit {
   public minPrice = new FormControl();
   public matureTime = new FormControl();
   public deathRate = new FormControl();
-  public requiredElement = new FormControl();
+  public requiredCPU = new FormControl();
+  public collectCost = new FormControl();
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -26,15 +28,18 @@ export class AdminComponent implements OnInit {
       'minPrice': this.minPrice,
       'matureTime': this.matureTime,
       'deathRate': this.deathRate,
-      'requiredElement': this.requiredElement
+      'requiredCPU': this.requiredCPU,
+      'collectCost': this.collectCost
     });
   }
 
   Save() {
-    const toSend = this.af.database.object(`/buddies/`);
-      toSend.set(this.form.value);
+    const toSend = this.af.database.list(`/buddies/`);
+    toSend.push(this.form.value).key;
+    this.snackbarService.showToast('Created ' + this.name.value, 1500);
+    this.form.reset();
   }
 
-  constructor(public fb: FormBuilder, public af: AngularFire) { }
+  constructor(public fb: FormBuilder, public af: AngularFire, private snackbarService: MdlSnackbarService) { }
 
 }
