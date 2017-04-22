@@ -177,9 +177,9 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   private calculatePrice(buddy: Buddy) {
-    buddy.sellPrice = buddy.age > buddy.matureTime ?
+    buddy.sellPrice = +(buddy.age > buddy.matureTime ?
       Math.floor(+buddy.minPrice + Math.log(Math.ceil((buddy.age - buddy.matureTime) / 25))) :
-      0;
+      0);
   }
 
   sellBuddy() {
@@ -193,7 +193,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   sellAllBuddies(worthDouble: boolean) {
-    const buddiesToSell = this.byteBuddies.buddies.filter(b => b.sellPrice >= (worthDouble ? b.sellPrice * 2 : 1));
+    const buddiesToSell = this.byteBuddies.buddies.filter(b => b.sellPrice >= (worthDouble ? +b.minPrice * 2 : 1));
     if (buddiesToSell.length > 0) {
       buddiesToSell.forEach(b => {
         this.byteBuddies.buddies.splice(this.byteBuddies.buddies.findIndex(b2 =>
