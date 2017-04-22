@@ -1,4 +1,6 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { ByteBuddies } from '../models/byte-buddies';
+import { Buddy } from '../models/buddy';
 
 @Component({
   selector: 'app-game',
@@ -7,17 +9,21 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 })
 export class GameComponent implements OnInit, AfterViewInit {
   @ViewChild('hddCanvas') hddCanvas;
-  private buddies = [];
+  private byteBuddies: ByteBuddies;
   private ticks: number;
+  allBuddies: Buddy[];
   context: CanvasRenderingContext2D;
   canvasHeight = 500;
   canvasWidth = 400;
-  selectedBuddy = undefined;
+  selectedBuddy: Buddy;
 
   constructor() { }
 
   ngOnInit() {
-    this.buddies.push({
+    this.byteBuddies = new ByteBuddies();
+    this.byteBuddies.byteCoins = 0;
+    this.byteBuddies.buddies = new Array<Buddy>();
+    this.byteBuddies.buddies.push({
       id: 1,
       img: 'assets/rabbyte-center.png',
       xPos: Math.floor(Math.random() * 400),
@@ -27,6 +33,10 @@ export class GameComponent implements OnInit, AfterViewInit {
       sellPrice: 0,
       matureAge: 20
     });
+    this.allBuddies = new Array<Buddy>();
+    const rabbyte = new Buddy();
+    rabbyte.id = 1;
+    this.allBuddies.push();
   }
 
   ngAfterViewInit() {
@@ -53,7 +63,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   private drawBuddies() {
     const ctx = this.context;
     ctx.clearRect(0, 0, this.hddCanvas.nativeElement.width, this.hddCanvas.nativeElement.height);
-    this.buddies.forEach((buddy, ndx) => {
+    this.byteBuddies.buddies.forEach((buddy, ndx) => {
       buddy.age++;
       this.calculatePrice(buddy);
       const img = new Image();
@@ -83,13 +93,23 @@ export class GameComponent implements OnInit, AfterViewInit {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - Math.floor(rect.left);
     const y = e.clientY - Math.floor(rect.top);
-    this.selectedBuddy = this.buddies.find(b => b.xPos < x && x < b.xPos + 25 && b.yPos < y && y < b.yPos + 25);
+    this.selectedBuddy = this.byteBuddies.buddies.find(b => b.xPos < x && x < b.xPos + 25 && b.yPos < y && y < b.yPos + 25);
   }
 
   private calculatePrice(buddy: any) {
     buddy.sellPrice = buddy.age > buddy.matureAge ?
       Math.floor(buddy.basePrice + Math.log(Math.ceil((buddy.age - buddy.matureAge) / 25))) :
       0;
+  }
+
+  sellBuddy() {
+    this.byteBuddies.buddies.splice(this.byteBuddies.buddies.findIndex(b =>
+      b.id === this.selectedBuddy.id &&
+      b.xPos === this.selectedBuddy.xPos &&
+      b.yPos === this.selectedBuddy.yPos &&
+      b.age === this.selectedBuddy.age), 1);
+    this.byteBuddies.byteCoins += this.selectedBuddy.sellPrice;
+    this.selectedBuddy = undefined;
   }
 
 }
