@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { AngularFire, FirebaseObjectObservable } from 'angularfire2';
 
 @Component({
   selector: 'app-admin',
@@ -8,15 +9,14 @@ import { FormGroup, FormControl, FormBuilder, ReactiveFormsModule } from '@angul
 })
 export class AdminComponent implements OnInit {
 
+  item: FirebaseObjectObservable<any>;
+
   public form: FormGroup;
   public name = new FormControl();
   public initCost = new FormControl();
   public minPrice = new FormControl();
   public matureTime = new FormControl();
   public deathRate = new FormControl();
-  public left = new FormControl();
-  public center = new FormControl();
-  public right = new FormControl();
   public requiredElement = new FormControl();
 
   ngOnInit() {
@@ -26,17 +26,15 @@ export class AdminComponent implements OnInit {
       'minPrice': this.minPrice,
       'matureTime': this.matureTime,
       'deathRate': this.deathRate,
-      'left': this.left,
-      'center': this.center,
-      'right': this.right,
       'requiredElement': this.requiredElement
     });
   }
 
   Save() {
-    console.log('poop');
+    const toSend = this.af.database.object(`/buddies/`);
+       // toSend.set()
   }
 
-  constructor(public fb: FormBuilder) { }
+  constructor(public fb: FormBuilder, public af: AngularFire) { }
 
 }
