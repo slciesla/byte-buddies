@@ -32,7 +32,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.byteBuddies = new ByteBuddies();
     this.byteBuddies.byteCoins = 0;
-    this.byteBuddies.goldenBits = 1;
+    this.byteBuddies.goldenBits = 0;
     this.byteBuddies.buddies = new Array<Buddy>();
     this.byteBuddies.ssdBuddies = new Array<Buddy>();
 
