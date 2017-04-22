@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MdlSnackbarService } from '@angular-mdl/core';
+import { AngularFire, FirebaseListObservable } from 'angularfire2';
 import { ByteBuddies } from '../models/byte-buddies';
 import { Buddy } from '../models/buddy';
-import { BuddyService } from '../services/buddy.service';
 
 @Component({
   selector: 'app-game',
@@ -26,8 +26,7 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   // End
 
-  constructor(private snackbarService: MdlSnackbarService,
-    private buddyService: BuddyService) { }
+  constructor(private snackbarService: MdlSnackbarService, private af: AngularFire) { }
 
   ngOnInit() {
     this.byteBuddies = new ByteBuddies();
@@ -36,7 +35,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.byteBuddies.buddies = new Array<Buddy>();
     this.byteBuddies.ssdBuddies = new Array<Buddy>();
 
-    this.buddyService.getAll().subscribe(buddies => {
+    this.af.database.list('/buddies/').subscribe(buddies => {
       if (!this.allBuddies) {
         this.allBuddies = buddies;
         this.byteBuddies.buddies.push({ ...buddies[0] });
