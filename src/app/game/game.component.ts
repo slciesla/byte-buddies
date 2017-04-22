@@ -160,6 +160,16 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.selectedBuddy = undefined;
   }
 
+  sellAllBuddies(worthDouble: boolean) {
+    const buddiesToSell = this.byteBuddies.buddies.filter(b => b.sellPrice >= (worthDouble ? b.basePrice * 2 : 1));
+    buddiesToSell.forEach(b => {
+      this.byteBuddies.buddies.splice(this.byteBuddies.buddies.findIndex(b2 =>
+        b2.id === b.id && b2.xPos === b.xPos && b2.yPos === b.yPos && b2.age === b.age), 1);
+      this.byteBuddies.byteCoins += b.sellPrice;
+    });
+    this.selectedBuddy = undefined;
+  }
+
   buyBuddy(buddy: Buddy) {
     this.byteBuddies.byteCoins -= buddy.initCost;
     const bought = { ...buddy };
