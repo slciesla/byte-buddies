@@ -36,7 +36,7 @@
         <ng-template kendoTabContent>
           <div *ngFor="let buddy of allBuddies">
             <div>
-              <img [src]="buddy.img" width="25" height="25"> {{buddy.name}}
+              <img [src]="'assets/'+buddy.name+'2.png'" width="25" height="25"> {{buddy.name}}
             </div>
             <div>
               <button kendoButton (click)="buyBuddy(buddy)" [primary]="true" [disabled]="buddy.initCost > byteBuddies.byteCoins">Buy for {{buddy.initCost}}bytc</button>

@@ -36,8 +36,7 @@ export class GameComponent implements OnInit, AfterViewInit {
 
     const rabbyte = new Buddy();
     rabbyte.id = 1;
-    rabbyte.name = 'Rabbyte';
-    rabbyte.img = 'assets/rabbyte-center.png';
+    rabbyte.name = 'Ammobyte';
     rabbyte.basePrice = 2;
     rabbyte.matureAge = 20;
     rabbyte.initCost = 1;
@@ -85,6 +84,20 @@ export class GameComponent implements OnInit, AfterViewInit {
       buddy.age++;
       this.calculatePrice(buddy);
       const img = new Image();
+      buddy.img = 'assets/' + buddy.name;
+      switch (buddy.age % 4) {
+        case 0:
+          buddy.img += '1.png';
+          break;
+        case 1:
+        case 3:
+          buddy.img += '2.png';
+          break;
+        case 2:
+        default:
+          buddy.img += '3.png';
+          break;
+      }
       img.src = buddy.img;
       ctx.drawImage(img, buddy.xPos, buddy.yPos, 25, 25);
       const x = buddy.xPos + Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1);
