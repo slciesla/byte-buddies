@@ -1,18 +1,23 @@
 <div class="header">
   Byte Buddies - {{byteBuddies?.byteCoins}} ByteCoins - <span class="golden-bits">{{byteBuddies?.goldenBits}} Golden Bits</span>
 </div>
-<div style="min-height: 575px;">
-  <div class="col-sm-6" style="float: left;">
+<div class="mdl-grid" style="min-height: 575px;">
+  <div class="mdl-cell mdl-cell--6-col">
     <kendo-tabstrip [keepTabContent]="true">
       <kendo-tabstrip-tab [title]="'Hard Drive'" [selected]="true">
         <ng-template kendoTabContent>
           <canvas #hddCanvas width="{{canvasWidth}}" height="{{canvasHeight}}" style="background: #AAAAAA; border:2px solid #666666;"></canvas>
-          <div>
-            <button kendoButton (click)="sellAllBuddies(false)" [primary]="true">Sell All Mature</button>
-            <button kendoButton (click)="sellAllBuddies(true)" [primary]="true">Sell All Worth 2x</button>
+          <div style="width: 100%">
+            <button style="float: left; margin: 4px 4px 0 0;" kendoButton (click)="sellAllBuddies(false)" [primary]="true">Sell All Mature</button>
+            <button style="float: left; margin: 4px 4px 0 0;" kendoButton (click)="sellAllBuddies(true)" [primary]="true">Sell All Worth 2x</button>
+            <div style="float: left">
+              <div>{{currEggs}} / {{byteBuddies.ram?.capacity}} Eggs</div>
+              <div>{{byteBuddies.buddies.length}} / {{byteBuddies.hdd?.capacity}} Buddies</div>
+            </div>
           </div>
           <div *ngIf="selectedBuddy">
             <h3>Selected Buddy</h3>
+            <div>Name: {{selectedBuddy.name}}</div>
             <div>Age: {{selectedBuddy.age}}</div>
             <div>Sell Price: {{selectedBuddy.sellPrice}}</div>
             <button kendoButton (click)="sellBuddy()" [primary]="true" [disabled]="selectedBuddy.sellPrice === 0">Sell?</button>
@@ -24,27 +29,107 @@
           <canvas #ssdCanvas width="{{canvasWidth}}" height="{{canvasHeight}}" style="background: #EEEEAA; border:2px solid #AAAA77;"></canvas>
           <div *ngIf="selectedSsdBuddy">
             <h3>Selected Buddy</h3>
+            <div>Name: {{selectedSsdBuddy.name}}</div>
             <div>Age: {{selectedSsdBuddy.age}}</div>
           </div>
         </ng-template>
       </kendo-tabstrip-tab>
     </kendo-tabstrip>
   </div>
-  <div class="col-sm-6" style="padding-left: 5%; float: left;">
+  <div class="mdl-cell mdl-cell--6-col">
     <kendo-tabstrip>
       <kendo-tabstrip-tab [title]="'Byte Buddies'" [selected]="true">
         <ng-template kendoTabContent>
-          <div *ngFor="let buddy of allBuddies">
-            <div>{{buddy.name}}</div>
-            <div>
-              <button kendoButton (click)="buyBuddy(buddy)" [primary]="true" [disabled]="buddy.initCost > byteBuddies.byteCoins">Buy for {{buddy.initCost}}bytc</button>
-              <button kendoButton (click)="collectBuddy(buddy)" [disabled]="buddy.collectCost > byteBuddies.goldenBits" class="golden-bits">Collect for {{buddy.collectCost}}gb</button>
-            </div>
-          </div>
+          <kendo-tabstrip>
+            <kendo-tabstrip-tab [title]="'Purchase Eggs'" [selected]="true">
+              <ng-template kendoTabContent>
+                <div *ngFor="let buddy of allBuddies">
+                  <div>{{buddy.name}}</div>
+                  <div>
+                    <button kendoButton (click)="buyBuddy(buddy)" [primary]="true" [disabled]="buddy.initCost > byteBuddies.byteCoins">Buy for {{buddy.initCost}}bytc</button>
+                    <button kendoButton (click)="collectBuddy(buddy)" [disabled]="buddy.collectCost > byteBuddies.goldenBits" class="golden-bits">Collect for {{buddy.collectCost}}gb</button>
+                  </div>
+                </div>
+              </ng-template>
+            </kendo-tabstrip-tab>
+            <kendo-tabstrip-tab [title]="'Cloning'">
+              <ng-template kendoTabContent>
+              </ng-template>
+            </kendo-tabstrip-tab>
+            <kendo-tabstrip-tab [title]="'Breeding'">
+              <ng-template kendoTabContent>
+              </ng-template>
+            </kendo-tabstrip-tab>
+          </kendo-tabstrip>
         </ng-template>
       </kendo-tabstrip-tab>
       <kendo-tabstrip-tab [title]="'Upgrades'">
         <ng-template kendoTabContent>
+          <div class="upgrade-tile" *ngIf="nextHdd">
+            <div class="mdl-grid">
+              <div class="mdl-cell mdl-cell--6-col">
+                <div class="upgrade-tile-title">Hard Drive</div>
+                <div>{{nextHdd.name}}</div>
+                <div>{{nextHdd.desc}}</div>
+                <div>
+                  <button kendoButton (click)="buyHdd(nextHdd)" [primary]="true" [disabled]="nextHdd.cost > byteBuddies.byteCoins">Buy for {{nextHdd.cost}}bytc</button>
+                </div>
+              </div>
+              <div class="mdl-cell mdl-cell--6-col">
+                Allows you to own {{nextHdd.capacity}} total Byte Buddies at once.
+              </div>
+            </div>
+          </div>
+          <div class="upgrade-tile" *ngIf="nextCpu">
+            <div class="mdl-grid">
+              <div class="mdl-cell mdl-cell--6-col">
+                <div class="upgrade-tile-title">Processor</div>
+                <div>{{nextCpu.name}}</div>
+                <div>{{nextCpu.desc}}</div>
+                <div>
+                  <button kendoButton (click)="buyCpu(nextCpu)" [primary]="true" [disabled]="nextCpu.cost > byteBuddies.byteCoins">Buy for {{nextCpu.cost}}bytc</button>
+                </div>
+              </div>
+              <div class="mdl-cell mdl-cell--6-col">
+                Unlocks more Byte Buddies!
+              </div>
+            </div>
+          </div>
+          <div class="upgrade-tile" *ngIf="nextGpu">
+            <div class="mdl-grid">
+              <div class="mdl-cell mdl-cell--6-col">
+                <div class="upgrade-tile-title">Graphics Card</div>
+                <div>{{nextGpu.name}}</div>
+                <div>{{nextGpu.desc}}</div>
+                <div>
+                  <button kendoButton (click)="buyGpu(nextGpu)" [primary]="true" [disabled]="nextGpu.cost > byteBuddies.byteCoins">Buy for {{nextGpu.cost}}bytc</button>
+                </div>
+              </div>
+              <div class="mdl-cell mdl-cell--6-col">
+                <span *ngIf="nextGpu.$key == 2">
+                  Allows you to breed your Byte Buddies!
+                </span>
+                <span *ngIf="nextGpu.$key >= 3">
+                  Opens the next tier of breeding!
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="upgrade-tile" *ngIf="nextRam">
+            <div class="mdl-grid">
+              <div class="mdl-cell mdl-cell--6-col">
+                <div class="upgrade-tile-title">RAM</div>
+                <div>{{nextRam.name}}</div>
+                <div>{{nextRam.desc}}</div>
+                <div>
+                  <button kendoButton (click)="buyRam(nextRam)" [primary]="true" [disabled]="nextRam.cost > byteBuddies.byteCoins">Buy for {{nextRam.cost}}bytc</button>
+                </div>
+              </div>
+              <div class="mdl-cell mdl-cell--6-col">
+                Allows you to have {{nextRam.capacity}} Eggs at once.
+              </div>
+            </div>
+          </div>
         </ng-template>
       </kendo-tabstrip-tab>
       <kendo-tabstrip-tab [title]="'Stats'">
@@ -59,10 +144,21 @@
         <ng-template kendoTabContent>
           <div>Buy Byte Buddies as eggs, hatch them and raise them and sell them when they're older to turn a profit!</div>
           <div>Golden Bits have a chance to drop when hatching a buddy equal to 1/10th of their cost.</div>
+          <div>Upgrading your HDD increases the number of buddies you can have at once.</div>
+          <div>Upgrading your CPU allows you to purchase different buddies.</div>
+          <div>Upgrading your GPU raises how far you can breed your buddies.</div>
+          <div>Upgrading your RAM allows more eggs to be hatching at once.</div>
         </ng-template>
       </kendo-tabstrip-tab>
       <kendo-tabstrip-tab [title]="'Options'">
         <ng-template kendoTabContent>
+          <div>
+            <button kendoButton (click)="saveGame()" [primary]="true">Manual Save</button>
+          </div>
+          <br />
+          <div>
+            <button kendoButton (click)="clearSave()" [primary]="true">Erase Data &amp; Start Over</button>
+          </div>
         </ng-template>
       </kendo-tabstrip-tab>
     </kendo-tabstrip>

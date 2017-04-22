@@ -1,15 +1,7 @@
 export class ComputerComponent {
-    key: string;
+    $key: number;
     name: string;
     desc: string;
-    price: number;
-    level: number;
-    type: ComputerComponentType;
-}
-
-export enum ComputerComponentType {
-    CPU,
-    GPU,
-    RAM,
-    HDD
+    cost: number;
+    capacity: number;
 }

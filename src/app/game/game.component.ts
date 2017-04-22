@@ -3,6 +3,7 @@ import { MdlSnackbarService } from '@angular-mdl/core';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
 import { ByteBuddies } from '../models/byte-buddies';
 import { Buddy } from '../models/buddy';
+import { ComputerComponent } from '../models/computer-component';
 
 @Component({
   selector: 'app-game',
@@ -14,13 +15,23 @@ export class GameComponent implements OnInit, AfterViewInit {
   @ViewChild('ssdCanvas') ssdCanvas;
   private byteBuddies: ByteBuddies;
   private ticks: number;
+  private saveTicks: number;
   allBuddies: Buddy[];
+  allCpus: ComputerComponent[];
+  allGpus: ComputerComponent[];
+  allRams: ComputerComponent[];
+  allHdds: ComputerComponent[];
   hddContext: CanvasRenderingContext2D;
   ssdContext: CanvasRenderingContext2D;
   canvasHeight = 500;
   canvasWidth = 400;
   selectedBuddy: Buddy;
   selectedSsdBuddy: Buddy;
+  nextHdd: ComputerComponent;
+  nextCpu: ComputerComponent;
+  nextGpu: ComputerComponent;
+  nextRam: ComputerComponent;
+  currEggs: number;
 
   // Jeremys Code
 
@@ -29,21 +40,79 @@ export class GameComponent implements OnInit, AfterViewInit {
   constructor(private snackbarService: MdlSnackbarService, private af: AngularFire) { }
 
   ngOnInit() {
-    this.byteBuddies = new ByteBuddies();
-    this.byteBuddies.byteCoins = 0;
-    this.byteBuddies.goldenBits = 0;
-    this.byteBuddies.buddies = new Array<Buddy>();
-    this.byteBuddies.ssdBuddies = new Array<Buddy>();
-
-    this.af.database.list('/buddies/').subscribe(buddies => {
+    let newGame = true;
+    if (localStorage.getItem('byteBuddies')) {
+      newGame = false;
+      this.byteBuddies = JSON.parse(localStorage.getItem('byteBuddies'));
+      this.snackbarService.showToast('Game Loaded', 2500);
+      this.currEggs = this.byteBuddies.buddies.filter(b => b.age < b.matureTime).length;
+    } else {
+      this.byteBuddies = new ByteBuddies();
+      this.byteBuddies.byteCoins = 0;
+      this.byteBuddies.goldenBits = 0;
+      this.byteBuddies.buddies = new Array<Buddy>();
+      this.byteBuddies.ssdBuddies = new Array<Buddy>();
+    }
+    this.af.database.list('/buddies/').subscribe((buddies: Buddy[]) => {
       if (!this.allBuddies) {
         this.allBuddies = buddies;
-        this.byteBuddies.buddies.push({ ...buddies[0] });
-        this.byteBuddies.buddies[0].age = 0;
-        this.byteBuddies.buddies[0].xPos = Math.floor(Math.random() * 375);
-        this.byteBuddies.buddies[0].yPos = Math.floor(Math.random() * 475);
+        if (newGame) {
+          this.currEggs = 1;
+          this.byteBuddies.buddies.push({ ...buddies[0] });
+          this.byteBuddies.buddies[0].age = 0;
+          this.byteBuddies.buddies[0].xPos = Math.floor(Math.random() * 375);
+          this.byteBuddies.buddies[0].yPos = Math.floor(Math.random() * 475);
+        }
       }
     });
+
+    this.af.database.list('/components/CPU/').subscribe((cpus: ComputerComponent[]) => {
+      this.allCpus = cpus.sort((a, b) => {
+        if (a.$key === b.$key) { return 0; };
+        return +a.$key < +b.$key ? -1 : 1;
+      });
+      if (newGame || !this.byteBuddies.cpu) {
+        this.byteBuddies.cpu = cpus[0];
+      }
+      const nextIndex = cpus.findIndex(c => c.name === this.byteBuddies.cpu.name) + 1;
+      this.nextCpu = cpus[nextIndex];
+    });
+
+    this.af.database.list('/components/HDD/').subscribe((hdds: ComputerComponent[]) => {
+      this.allHdds = hdds.sort((a, b) => {
+        if (a.$key === b.$key) { return 0; };
+        return +a.$key < +b.$key ? -1 : 1;
+      });
+      if (newGame || !this.byteBuddies.hdd) {
+        this.byteBuddies.hdd = hdds[0];
+      }
+      const nextIndex = hdds.findIndex(c => c.name === this.byteBuddies.hdd.name) + 1;
+      this.nextHdd = hdds[nextIndex];
+    });
+
+    this.af.database.list('/components/GPU/').subscribe((gpus: ComputerComponent[]) => {
+      this.allGpus = gpus.sort((a, b) => {
+        if (a.$key === b.$key) { return 0; };
+        return +a.$key < +b.$key ? -1 : 1;
+      });
+      if (newGame || !this.byteBuddies.gpu) {
+        this.byteBuddies.gpu = gpus[0];
+      }
+      const nextIndex = gpus.findIndex(c => c.name === this.byteBuddies.gpu.name) + 1;
+      this.nextGpu = gpus[nextIndex];
+    });
+
+    // this.af.database.list('/components/RAM/').subscribe((rams: ComputerComponent[]) => {
+    //   this.allRams = rams.sort((a, b) => {
+    //     if (a.$key === b.$key) { return 0; };
+    //     return +a.$key < +b.$key ? -1 : 1;
+    //   });
+    //   if (newGame || !this.byteBuddies.ram) {
+    //     this.byteBuddies.ram = rams[0];
+    //   }
+    // const nextIndex
+    //   this.nextRam = rams[rams.findIndex(c => c.$key === this.byteBuddies.ram.$key) + 1];
+    // });
 
     // Jeremys Code
 
@@ -58,6 +127,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     ssdCanvas.onclick = (e) => { this.clickBuddy(e, ssdCanvas, 'ssd'); };
     this.ssdContext = ssdCanvas.getContext('2d');
     this.ticks = 100;
+    this.saveTicks = 0;
     this.gameTick();
   }
 
@@ -71,6 +141,23 @@ export class GameComponent implements OnInit, AfterViewInit {
       this.ticks = 0;
       this.drawBuddies();
     }
+
+    this.saveTicks += 1;
+    if (this.saveTicks > 5000) {
+      this.saveTicks = 0;
+      this.saveGame();
+    }
+  }
+
+  saveGame() {
+    localStorage.setItem('byteBuddies', JSON.stringify(this.byteBuddies));
+    this.snackbarService.showToast('Game Saved', 1000);
+  }
+
+  clearSave() {
+    localStorage.removeItem('byteBuddies');
+    this.snackbarService.showToast('Storage Cleared', 1000);
+    location.reload(true);
   }
 
   private drawBuddies() {
@@ -80,6 +167,9 @@ export class GameComponent implements OnInit, AfterViewInit {
       buddy.age++;
       this.calculatePrice(buddy);
       const img = new Image();
+      if (buddy.age === +buddy.matureTime) {
+        this.currEggs--;
+      }
       if (buddy.age > buddy.matureTime - 2 && buddy.age <= buddy.matureTime) {
         buddy.img = 'assets/eggcracking.png';
       } else {
@@ -103,7 +193,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       buddy.width = 36;
       buddy.height = 42;
       if (buddy.age > buddy.matureTime) {
-        const mod = img.width / 25;
+        const mod = 15;
         buddy.width = Math.floor(img.width / mod);
         buddy.height = Math.floor(img.height / mod);
       }
@@ -157,7 +247,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       buddy.width = 36;
       buddy.height = 42;
       if (buddy.age > buddy.matureTime) {
-        const mod = img.width / 25;
+        const mod = 15;
         buddy.width = Math.floor(img.width / mod);
         buddy.height = Math.floor(img.height / mod);
       }
@@ -198,7 +288,7 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   private calculatePrice(buddy: Buddy) {
     buddy.sellPrice = +(buddy.age > buddy.matureTime ?
-      Math.floor(+buddy.minPrice + Math.log(Math.ceil((buddy.age - buddy.matureTime) / 25))) :
+      Math.floor(+buddy.minPrice + Math.log(Math.ceil((buddy.age - buddy.matureTime) / 50)) * +buddy.minPrice) :
       0);
   }
 
@@ -208,7 +298,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       b.yPos === this.selectedBuddy.yPos &&
       b.age === this.selectedBuddy.age), 1);
     this.byteBuddies.byteCoins += this.selectedBuddy.sellPrice;
-    const goldenChance = +this.selectedBuddy.minPrice / 10;
+    const goldenChance = +this.selectedBuddy.minPrice * 0.001;
     let numGoldens = Math.floor(goldenChance / 100);
     if (Math.random() <= goldenChance) {
       numGoldens++;
@@ -230,7 +320,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           b2.xPos === b.xPos && b2.yPos === b.yPos && b2.age === b.age), 1);
         this.byteBuddies.byteCoins += b.sellPrice;
         totalBytc += b.sellPrice;
-        const goldenChance = +b.minPrice / 10;
+        const goldenChance = +b.minPrice * 0.001;
         let numGoldens = Math.floor(goldenChance / 100);
         if (Math.random() <= goldenChance) {
           numGoldens++;
@@ -250,6 +340,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     bought.age = 0;
     bought.xPos = Math.floor(Math.random() * 375);
     bought.yPos = Math.floor(Math.random() * 475);
+    this.currEggs++;
     this.byteBuddies.buddies.push(bought);
   }
 
