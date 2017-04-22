@@ -1,1 +1,11 @@
-<p>Test</p>
+<div>
+<form [formGroup]="form">
+<input type="text" value="name" [formControlName]="name">
+<input type="text" value="initCost" [formControlName]="initCost">
+<input type="text" value="minPrice" [formControlName]="minPrice">
+<input type="text" value="matureTime" [formControlName]="matureTime">
+<input type="text" value="deathRate" [formControlName]="deathRate">
+<br/>
+<img src="assets/rabbyte-center.png" (click)="Save()" width="25px" height="25px">
+</form>
+</div>
