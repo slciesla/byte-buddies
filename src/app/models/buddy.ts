@@ -1,5 +1,6 @@
 export class Buddy {
       id: number;
+      name: string;
       img: string;
       xPos: number;
       yPos: number;

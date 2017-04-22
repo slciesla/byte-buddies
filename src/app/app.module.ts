@@ -6,6 +6,13 @@ import { HttpModule } from '@angular/http';
 import { RouterModule, Routes } from '@angular/router';
 import { ButtonsModule } from '@progress/kendo-angular-buttons';
 import { LayoutModule } from '@progress/kendo-angular-layout';
+import {
+  MdlDialogOutletModule,
+  MdlDialogOutletService,
+  MdlSnackbaModule,
+  MdlSnackbarComponent,
+  MdlSnackbarService
+} from '@angular-mdl/core';
 import { AngularFireModule } from 'angularfire2';
 
 
@@ -22,12 +29,12 @@ export const routing: ModuleWithProviders = RouterModule.forRoot(routes);
 
 // Must export the config
 export const firebaseConfig = {
-    apiKey: 'AIzaSyDrZ3z0I2O_J5kj8hIdbUK7Mg5J88LgNKA',
-    authDomain: 'byte-buddies.firebaseapp.com',
-    databaseURL: 'https://byte-buddies.firebaseio.com',
-    projectId: 'byte-buddies',
-    storageBucket: 'byte-buddies.appspot.com',
-    messagingSenderId: '6117024891'
+  apiKey: 'AIzaSyDrZ3z0I2O_J5kj8hIdbUK7Mg5J88LgNKA',
+  authDomain: 'byte-buddies.firebaseapp.com',
+  databaseURL: 'https://byte-buddies.firebaseio.com',
+  projectId: 'byte-buddies',
+  storageBucket: 'byte-buddies.appspot.com',
+  messagingSenderId: '6117024891'
 };
 
 @NgModule({
@@ -45,9 +52,17 @@ export const firebaseConfig = {
     ButtonsModule,
     ReactiveFormsModule,
     LayoutModule,
+    MdlDialogOutletModule,
+    MdlSnackbaModule,
     AngularFireModule.initializeApp(firebaseConfig)
   ],
-  providers: [],
+  entryComponents: [
+    MdlSnackbarComponent
+  ],
+  providers: [
+    MdlDialogOutletService,
+    MdlSnackbarService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

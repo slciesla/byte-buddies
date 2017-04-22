@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { MdlSnackbarService } from '@angular-mdl/core';
 import { ByteBuddies } from '../models/byte-buddies';
 import { Buddy } from '../models/buddy';
 
@@ -17,7 +18,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   canvasWidth = 400;
   selectedBuddy: Buddy;
 
-  constructor() { }
+  constructor(private snackbarService: MdlSnackbarService) { }
 
   ngOnInit() {
     this.byteBuddies = new ByteBuddies();
@@ -25,6 +26,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.byteBuddies.buddies = new Array<Buddy>();
     this.byteBuddies.buddies.push({
       id: 1,
+      name: 'Rabbyte',
       img: 'assets/rabbyte-center.png',
       xPos: Math.floor(Math.random() * 400),
       yPos: Math.floor(Math.random() * 500),
@@ -103,6 +105,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   sellBuddy() {
+    this.snackbarService.showToast('Sold ' + this.selectedBuddy.name + ' for ' + this.selectedBuddy.sellPrice + 'bytc', 1500);
     this.byteBuddies.buddies.splice(this.byteBuddies.buddies.findIndex(b =>
       b.id === this.selectedBuddy.id &&
       b.xPos === this.selectedBuddy.xPos &&
