@@ -2,7 +2,7 @@
   Byte Buddies - {{byteBuddies?.byteCoins}} ByteCoins - <span class="golden-bits">{{byteBuddies?.goldenBits}} Golden Bits</span>
 </div>
 <div style="min-height: 575px;">
-  <div style="width: 420px; float: left; padding-right: 6px;">
+  <div style="width: 421px; float: left; padding-right: 6px;">
     <kendo-tabstrip [keepTabContent]="true">
       <kendo-tabstrip-tab [title]="'Hard Drive'" [selected]="true">
         <ng-template kendoTabContent>
@@ -10,7 +10,7 @@
           <div style="width: 100%">
             <button style="float: left; margin: 4px 4px 0 0;" kendoButton (click)="sellAllBuddies(false)" [primary]="true">Sell All Mature</button>
             <button style="float: left; margin: 4px 4px 0 0;" kendoButton (click)="sellAllBuddies(true)" [primary]="true">Sell All Worth 2x Base Price</button>
-            <div style="float: left">
+            <div style="float: left; font-size: 12px;">
               <div>{{currEggs}} / {{byteBuddies.ram?.capacity}} Eggs</div>
               <div>{{byteBuddies.buddies.length}} / {{byteBuddies.hdd?.capacity}} Buddies</div>
             </div>
@@ -29,7 +29,6 @@
           <canvas #ssdCanvas width="{{canvasWidth}}" height="{{canvasHeight}}" style="background: #EEEEAA; border:2px solid #AAAA77;"></canvas>
           <div *ngIf="selectedSsdBuddy" class="tile" style="float: left; width: 95%">
             <div class="tile-title">Selected Buddy</div>
-            <h3>Selected Buddy</h3>
             <div>Name: {{selectedSsdBuddy.name}}</div>
             <div>Age: {{selectedSsdBuddy.age}}</div>
           </div>
@@ -37,7 +36,7 @@
       </kendo-tabstrip-tab>
     </kendo-tabstrip>
   </div>
-  <div style="min-width: 420px; float: left;">
+  <div style="min-width: 420px;">
     <kendo-tabstrip>
       <kendo-tabstrip-tab [title]="'Byte Buddies'" [selected]="true">
         <ng-template kendoTabContent>
