@@ -2,6 +2,7 @@ export class Achievement {
     id: number;
     name: string;
     desc: string;
-    difficulty: number;
+    byteReward: number;
+    goldReward: number;
     image: string;
 }
