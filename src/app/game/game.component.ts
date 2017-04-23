@@ -709,7 +709,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   checkAchievement(id: any): boolean {
-    return this.byteBuddies.achievements.findIndex(a => +a === +id) > -1;
+    return this.byteBuddies.achievements.findIndex(aid => +aid === +id) > -1;
   }
 
   unlockAchievement(id: number) {
@@ -717,6 +717,8 @@ export class GameComponent implements OnInit, AfterViewInit {
       this.byteBuddies.achievements.push(id);
       const chievo = this.allAchievements.find(a => +a.ID === +id)
       this.toasts.push({ severity: 'info', summary: 'Achievement Unlocked', detail: chievo.name2 });
+      this.byteBuddies.byteCoins += chievo.byteReward;
+      this.byteBuddies.goldenBits += chievo.goldReward;
     }
   }
 
