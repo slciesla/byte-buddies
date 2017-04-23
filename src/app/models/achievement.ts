@@ -3,4 +3,5 @@ export class Achievement {
     name: string;
     desc: string;
     difficulty: number;
+    image: string;
 }

@@ -75,7 +75,9 @@ export class GameComponent implements OnInit, AfterViewInit {
         this.byteBuddies.cpu = cpus[0];
       }
       const nextIndex = cpus.findIndex(c => c.name === this.byteBuddies.cpu.name) + 1;
-      this.nextCpu = cpus[nextIndex];
+      if (nextIndex < cpus.length) {
+        this.nextCpu = cpus[nextIndex];
+      }
     });
 
     this.af.database.list('/components/HDD/').subscribe((hdds: ComputerComponent[]) => {
@@ -87,7 +89,9 @@ export class GameComponent implements OnInit, AfterViewInit {
         this.byteBuddies.hdd = hdds[0];
       }
       const nextIndex = hdds.findIndex(c => c.name === this.byteBuddies.hdd.name) + 1;
-      this.nextHdd = hdds[nextIndex];
+      if (nextIndex < hdds.length) {
+        this.nextHdd = hdds[nextIndex];
+      }
     });
 
     this.af.database.list('/components/GPU/').subscribe((gpus: ComputerComponent[]) => {
@@ -99,7 +103,9 @@ export class GameComponent implements OnInit, AfterViewInit {
         this.byteBuddies.gpu = gpus[0];
       }
       const nextIndex = gpus.findIndex(c => c.name === this.byteBuddies.gpu.name) + 1;
-      this.nextGpu = gpus[nextIndex];
+      if (nextIndex < gpus.length) {
+        this.nextGpu = gpus[nextIndex];
+      }
     });
 
     this.af.database.list('/components/RAM/').subscribe((rams: ComputerComponent[]) => {
@@ -110,8 +116,10 @@ export class GameComponent implements OnInit, AfterViewInit {
       if (newGame || !this.byteBuddies.ram) {
         this.byteBuddies.ram = rams[0];
       }
-    const nextIndex = rams.findIndex(c => c.$key === this.byteBuddies.ram.$key) + 1;
-      this.nextRam = rams[nextIndex];
+      const nextIndex = rams.findIndex(c => c.name === this.byteBuddies.ram.name) + 1;
+      if (nextIndex < rams.length) {
+        this.nextRam = rams[nextIndex];
+      }
     });
 
     // Jeremys Code
@@ -158,6 +166,38 @@ export class GameComponent implements OnInit, AfterViewInit {
     localStorage.removeItem('byteBuddies');
     this.snackbarService.showToast('Storage Cleared', 1000);
     location.reload(true);
+  }
+
+  buyCpu() {
+    this.byteBuddies.cpu = this.nextCpu;
+    const nextIndex = this.allCpus.findIndex(c => c.name === this.byteBuddies.cpu.name) + 1;
+    if (nextIndex < this.allCpus.length) {
+      this.nextCpu = this.allCpus[nextIndex];
+    }
+  }
+
+  buyHdd() {
+    this.byteBuddies.hdd = this.nextHdd;
+    const nextIndex = this.allHdds.findIndex(c => c.name === this.byteBuddies.hdd.name) + 1;
+    if (nextIndex < this.allHdds.length) {
+      this.nextHdd = this.allHdds[nextIndex];
+    }
+  }
+
+  buyGpu() {
+    this.byteBuddies.gpu = this.nextGpu;
+    const nextIndex = this.allGpus.findIndex(c => c.name === this.byteBuddies.gpu.name) + 1;
+    if (nextIndex < this.allGpus.length) {
+      this.nextGpu = this.allGpus[nextIndex];
+    }
+  }
+
+  buyRam() {
+    this.byteBuddies.ram = this.nextRam;
+    const nextIndex = this.allRams.findIndex(c => c.name === this.byteBuddies.ram.name) + 1;
+    if (nextIndex < this.allRams.length) {
+      this.nextRam = this.allRams[nextIndex];
+    }
   }
 
   private drawBuddies() {
