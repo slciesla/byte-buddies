@@ -60,6 +60,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           this.currEggs = 1;
           this.byteBuddies.buddies.push({ ...buddies[0] });
           this.byteBuddies.buddies[0].age = 0;
+          this.byteBuddies.buddies[0].evolution = '';
           this.byteBuddies.buddies[0].xPos = Math.floor(Math.random() * 375);
           this.byteBuddies.buddies[0].yPos = Math.floor(Math.random() * 475);
         }
@@ -368,7 +369,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   sellAllBuddies(worthDouble: boolean) {
     let totalBytc = 0;
     let totalGoldens = 0;
-    const buddiesToSell = this.byteBuddies.buddies.filter(b => b.sellPrice >= (worthDouble ? +b.minPrice * 2 : 1));
+    const buddiesToSell = this.byteBuddies.buddies.filter(b => b.evolution === '' && b.sellPrice >= (worthDouble ? +b.minPrice * 2 : 1));
     const totalBuddies = buddiesToSell.length;
     if (buddiesToSell.length > 0) {
       buddiesToSell.forEach(b => {
@@ -394,6 +395,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.byteBuddies.byteCoins -= buddy.initCost;
     const bought = { ...buddy };
     bought.age = 0;
+    bought.evolution = '';
     bought.xPos = Math.floor(Math.random() * 375);
     bought.yPos = Math.floor(Math.random() * 475);
     this.currEggs++;
