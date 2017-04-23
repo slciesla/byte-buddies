@@ -469,6 +469,10 @@ export class GameComponent implements OnInit, AfterViewInit {
   sellBuddy() {
     this.incrementStat('Buddies Sold (Total)');
     this.incrementStat('Buddies Sold (' + this.selectedBuddy.fullName + ')');
+    // old friends - 1
+    if (+this.selectedBuddy.age > 100000) {
+      this.unlockAchievement(1);
+    }
     this.byteBuddies.buddies.splice(this.byteBuddies.buddies.findIndex(b =>
       b.xPos === this.selectedBuddy.xPos &&
       b.yPos === this.selectedBuddy.yPos &&
@@ -603,6 +607,10 @@ export class GameComponent implements OnInit, AfterViewInit {
         this.snackbarService.showToast('You need to upgrade your GPU to evolve past this level.', 5000);
       } else {
         success = true;
+        if ((this.breedBuddy1.name === 'Dragonbyte' && this.breedBuddy2.name === 'Puffbyte') ||
+          (this.breedBuddy2.name === 'Dragonbyte' && this.breedBuddy1.name === 'Puffbyte')) {
+          this.unlockAchievement(137);
+        }
         this.breedStats = new BreedStats();
         this.breedStats.buddy1 = this.breedBuddy1;
         this.breedStats.buddy2 = this.breedBuddy2;
@@ -711,7 +719,7 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   tryAchievements(stat: Stat) {
     if (stat.name === 'Eggs Hatched (Rabbyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(4);
           break;
@@ -735,7 +743,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Centibyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(5);
           break;
@@ -759,7 +767,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Mantabyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(6);
           break;
@@ -783,7 +791,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Jellybyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(7);
           break;
@@ -807,7 +815,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Trilobyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(8);
           break;
@@ -831,7 +839,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Ammobyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(9);
           break;
@@ -855,7 +863,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Goldiebyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(10);
           break;
@@ -879,7 +887,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Narwhalbyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(11);
           break;
@@ -903,7 +911,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Starbyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(12);
           break;
@@ -927,7 +935,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Puffbyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(13);
           break;
@@ -951,7 +959,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Turtlebyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(14);
           break;
@@ -975,7 +983,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Pigbyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(15);
           break;
@@ -999,7 +1007,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Mousiebyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(16);
           break;
@@ -1023,7 +1031,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Crabbyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(17);
           break;
@@ -1047,7 +1055,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Horsiebyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(18);
           break;
@@ -1071,7 +1079,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Octobyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(19);
           break;
@@ -1095,7 +1103,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Geoffreybyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(20);
           break;
@@ -1119,7 +1127,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Dragonbyte)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 1:
           this.unlockAchievement(21);
           break;
@@ -1140,7 +1148,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     } else if (stat.name === 'Eggs Hatched (Total)') {
-      switch(stat.value) {
+      switch (stat.value) {
         case 50:
           this.unlockAchievement(2);
           break;
@@ -1161,13 +1169,111 @@ export class GameComponent implements OnInit, AfterViewInit {
           break;
       }
     }
-    // zoology - 20 (1 of all)
-    // 134 = 10
-    // 135 = 50
-    // 136 = 100
+    const Rabbyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Rabbyte)');
+    const Centibyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Centibyte)');
+    const Mantabyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Mantabyte)');
+    const Jellybyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Jellybyte)');
+    const Trilobyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Trilobyte)');
+    const Ammobyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Ammobyte)');
+    const Goldiebyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Goldiebyte)');
+    const Narwhalbyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Narwhalbyte)');
+    const Starbyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Starbyte)');
+    const Puffbyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Puffbyte)');
+    const Turtlebyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Turtlebyte)');
+    const Pigbyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Pigbyte)');
+    const Mousiebyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Mousiebyte)');
+    const Crabbyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Crabbyte)');
+    const Horsiebyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Horsiebyte)');
+    const Octobyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Octobyte)');
+    const Geoffreybyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Geoffreybyte)');
+    const Dragonbyte = this.byteBuddies.stats.find(s => s.name === 'Eggs Hatched (Dragonbyte)');
 
-    // 137 - puff
-    // old friends - 1
+
+    if (stat.value === 1) {
+      if (Rabbyte && Rabbyte.value >= 1 &&
+        Centibyte && Centibyte.value >= 1 &&
+        Mantabyte && Mantabyte.value >= 1 &&
+        Jellybyte && Jellybyte.value >= 1 &&
+        Trilobyte && Trilobyte.value >= 1 &&
+        Ammobyte && Ammobyte.value >= 1 &&
+        Goldiebyte && Goldiebyte.value >= 1 &&
+        Narwhalbyte && Narwhalbyte.value >= 1 &&
+        Starbyte && Starbyte.value >= 1 &&
+        Puffbyte && Puffbyte.value >= 1 &&
+        Turtlebyte && Turtlebyte.value >= 1 &&
+        Pigbyte && Pigbyte.value >= 1 &&
+        Mousiebyte && Mousiebyte.value >= 1 &&
+        Crabbyte && Crabbyte.value >= 1 &&
+        Horsiebyte && Horsiebyte.value >= 1 &&
+        Octobyte && Octobyte.value >= 1 &&
+        Geoffreybyte && Geoffreybyte.value >= 1 &&
+        Dragonbyte && Dragonbyte.value >= 1) {
+        this.unlockAchievement(20);
+      }
+    } else if (stat.value === 10) {
+      if (Rabbyte && Rabbyte.value >= 10 &&
+        Centibyte && Centibyte.value >= 10 &&
+        Mantabyte && Mantabyte.value >= 10 &&
+        Jellybyte && Jellybyte.value >= 10 &&
+        Trilobyte && Trilobyte.value >= 10 &&
+        Ammobyte && Ammobyte.value >= 10 &&
+        Goldiebyte && Goldiebyte.value >= 10 &&
+        Narwhalbyte && Narwhalbyte.value >= 10 &&
+        Starbyte && Starbyte.value >= 10 &&
+        Puffbyte && Puffbyte.value >= 10 &&
+        Turtlebyte && Turtlebyte.value >= 10 &&
+        Pigbyte && Pigbyte.value >= 10 &&
+        Mousiebyte && Mousiebyte.value >= 10 &&
+        Crabbyte && Crabbyte.value >= 10 &&
+        Horsiebyte && Horsiebyte.value >= 10 &&
+        Octobyte && Octobyte.value >= 10 &&
+        Geoffreybyte && Geoffreybyte.value >= 10 &&
+        Dragonbyte && Dragonbyte.value >= 10) {
+        this.unlockAchievement(134);
+      }
+    } else if (stat.value === 50) {
+      if (Rabbyte && Rabbyte.value >= 50 &&
+        Centibyte && Centibyte.value >= 50 &&
+        Mantabyte && Mantabyte.value >= 50 &&
+        Jellybyte && Jellybyte.value >= 50 &&
+        Trilobyte && Trilobyte.value >= 50 &&
+        Ammobyte && Ammobyte.value >= 50 &&
+        Goldiebyte && Goldiebyte.value >= 50 &&
+        Narwhalbyte && Narwhalbyte.value >= 50 &&
+        Starbyte && Starbyte.value >= 50 &&
+        Puffbyte && Puffbyte.value >= 50 &&
+        Turtlebyte && Turtlebyte.value >= 50 &&
+        Pigbyte && Pigbyte.value >= 50 &&
+        Mousiebyte && Mousiebyte.value >= 50 &&
+        Crabbyte && Crabbyte.value >= 50 &&
+        Horsiebyte && Horsiebyte.value >= 50 &&
+        Octobyte && Octobyte.value >= 50 &&
+        Geoffreybyte && Geoffreybyte.value >= 50 &&
+        Dragonbyte && Dragonbyte.value >= 50) {
+        this.unlockAchievement(135);
+      }
+    } else if (stat.value === 100) {
+      if (Rabbyte && Rabbyte.value >= 100 &&
+        Centibyte && Centibyte.value >= 100 &&
+        Mantabyte && Mantabyte.value >= 100 &&
+        Jellybyte && Jellybyte.value >= 100 &&
+        Trilobyte && Trilobyte.value >= 100 &&
+        Ammobyte && Ammobyte.value >= 100 &&
+        Goldiebyte && Goldiebyte.value >= 100 &&
+        Narwhalbyte && Narwhalbyte.value >= 100 &&
+        Starbyte && Starbyte.value >= 100 &&
+        Puffbyte && Puffbyte.value >= 100 &&
+        Turtlebyte && Turtlebyte.value >= 100 &&
+        Pigbyte && Pigbyte.value >= 100 &&
+        Mousiebyte && Mousiebyte.value >= 100 &&
+        Crabbyte && Crabbyte.value >= 100 &&
+        Horsiebyte && Horsiebyte.value >= 100 &&
+        Octobyte && Octobyte.value >= 100 &&
+        Geoffreybyte && Geoffreybyte.value >= 100 &&
+        Dragonbyte && Dragonbyte.value >= 100) {
+        this.unlockAchievement(136);
+      }
+    }
   }
 
   checkAchievement(id: any): boolean {
