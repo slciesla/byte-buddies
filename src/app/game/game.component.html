@@ -55,28 +55,39 @@
             </kendo-tabstrip-tab>
             <kendo-tabstrip-tab [title]="'Breeding'">
               <ng-template kendoTabContent>
-                <div *ngIf="+byteBuddies.gpu.level === 1">
-                  You need the first GPU upgrade in order to breed your Byte Buddies.
-                </div>
-                <div *ngIf="+byteBuddies.gpu.level > 1">
-                  <div>
-                    Select 2 byte buddies to breed them. BOTH WILL BE LOST WHEN BRED - Be sure to clone if you want to keep him!
+                <div style="min-height: 494px">
+                  <div *ngIf="+byteBuddies.gpu.level === 1">
+                    You need the first GPU upgrade in order to breed your Byte Buddies.
                   </div>
-                  <kendo-dropdownlist [data]="byteBuddies.buddies" [value]="breedBuddy1" [textField]="'name'" [valueField]="'age'" (selectionChange)="breedChange($event)">
+                  <div *ngIf="+byteBuddies.gpu.level > 1">
+                    <div>
+                      Select 2 byte buddies to breed them. BOTH WILL BE LOST WHEN BRED - Be sure to clone if you want to keep him!
+                    </div>
+                    <kendo-dropdownlist [data]="breedList" [ngModel]="breedBuddy1" [textField]="'fullName'" [valueField]="'age'" (selectionChange)="breed1Change($event)">
                   </kendo-dropdownlist>
-                  <kendo-dropdownlist [data]="byteBuddies.buddies" [value]="breedBuddy2" [textField]="'name'" [valueField]="'age'" (selectionChange)="breedChange($event)">
+                  <kendo-dropdownlist [data]="breedList" [ngModel]="breedBuddy2" [textField]="'fullName'" [valueField]="'age'" (selectionChange)="breed2Change($event)">
                   </kendo-dropdownlist>
+                    <br />
+                    <div *ngIf="breedStats">
+                      <div>Evolve Chance: {{breedStats.evolveChance}}%</div>
+                      <div>Same Type Chance: {{breedStats.sameChance}}%</div>
+                      <div *ngIf="breedStats.devolveChance > 0">Devolve Chance: {{breedStats.devolveChance}}%</div>
+                      <button kendoButton (click)="breedBuddies()" [primary]="true" [disabled]="currEggs === byteBuddies.ram?.capacity || byteBuddies.buddies.length === byteBuddies.hdd.capacity">Breed!</button>
+                    </div>
+                  </div>
                 </div>
               </ng-template>
             </kendo-tabstrip-tab>
             <kendo-tabstrip-tab [title]="'Cloning'">
               <ng-template kendoTabContent>
-                <div>
-                  You can only clone evolved buddies (it's cheaper to just buy new eggs if you want more of a base type). Select a buddy to
-                  see the costs to clone. You can't clone past the egg or buddy limit.
+                <div style="min-height: 494px">
+                  <div>
+                    You can only clone evolved buddies (it's cheaper to just buy new eggs if you want more of a base type). Select a buddy to
+                    see the costs to clone. You can't clone past the egg or buddy limit.
+                  </div>
+                  <kendo-dropdownlist [data]="byteBuddies.buddies" [value]="cloneBuddy" [textField]="'name'" [valueField]="'age'" (selectionChange)="cloneChange($event)">
+                  </kendo-dropdownlist>
                 </div>
-                <kendo-dropdownlist [data]="byteBuddies.buddies" [value]="cloneBuddy" [textField]="'name'" [valueField]="'age'" (selectionChange)="cloneChange($event)">
-                </kendo-dropdownlist>
               </ng-template>
             </kendo-tabstrip-tab>
           </kendo-tabstrip>

@@ -40,6 +40,8 @@ export class GameComponent implements OnInit, AfterViewInit {
   breedBuddy1: Buddy;
   breedBuddy2: Buddy;
   breedStats: BreedStats;
+  breedList: Buddy[];
+  loading = true;
 
   // Jeremys Code
 
@@ -64,10 +66,15 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.af.database.list('/buddies/').subscribe((buddies: Buddy[]) => {
       if (!this.allBuddies) {
         this.allBuddies = buddies;
+        this.allBuddies = buddies.sort((a, b) => {
+          if (a.initCost === b.initCost) { return 0; };
+          return +a.initCost < +b.initCost ? -1 : 1;
+        });
         if (newGame) {
           this.currEggs = 1;
           this.byteBuddies.buddies.push({ ...buddies[0] });
           this.byteBuddies.buddies[0].age = 0;
+          this.byteBuddies.buddies[0].fullName = this.byteBuddies.buddies[0].name;
           this.byteBuddies.buddies[0].evolution = '';
           this.byteBuddies.buddies[0].xPos = Math.floor(Math.random() * 375);
           this.byteBuddies.buddies[0].yPos = Math.floor(Math.random() * 475);
@@ -75,6 +82,8 @@ export class GameComponent implements OnInit, AfterViewInit {
         } else {
           this.purchaseableBuddies = this.allBuddies.filter(b => +b.requiredCPU <= +this.byteBuddies.cpu.level);
         }
+        this.breedList = new Array<Buddy>(...this.byteBuddies.buddies);
+        this.loading = false;
       }
     });
 
@@ -176,7 +185,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       this.saveGame();
     }
 
-    if (+this.byteBuddies.byteCoins === 0 && this.byteBuddies.buddies.length === 0) {
+    if (!this.loading && +this.byteBuddies.byteCoins === 0 && this.byteBuddies.buddies.length === 0) {
       this.byteBuddies.byteCoins = 1;
       this.snackbarService.showToast('You should avoid spending your last coin. Here\'s a free one', 5000);
     }
@@ -390,7 +399,8 @@ export class GameComponent implements OnInit, AfterViewInit {
   sellAllBuddies(worthDouble: boolean) {
     let totalBytc = 0;
     let totalGoldens = 0;
-    const buddiesToSell = this.byteBuddies.buddies.filter(b => b.evolution === '' && b.sellPrice >= (worthDouble ? +b.minPrice * 2 : 1));
+    const buddiesToSell = this.byteBuddies.buddies.filter(b => b.evolution === '' && b.name !== 'Dragonbyte' &&
+      b.sellPrice >= (worthDouble ? +b.minPrice * 2 : 1));
     const totalBuddies = buddiesToSell.length;
     if (buddiesToSell.length > 0) {
       buddiesToSell.forEach(b => {
@@ -414,13 +424,18 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   buyBuddy(buddy: Buddy) {
     this.byteBuddies.byteCoins -= buddy.initCost;
-    const bought = { ...buddy };
-    bought.age = 0;
-    bought.evolution = '';
-    bought.xPos = Math.floor(Math.random() * 375);
-    bought.yPos = Math.floor(Math.random() * 475);
+    this.getBuddy(buddy, '');
+  }
+
+  getBuddy(buddy: Buddy, evolution: string) {
+    const newBuddy = { ...buddy };
+    newBuddy.age = 0;
+    newBuddy.evolution = evolution;
+    newBuddy.xPos = Math.floor(Math.random() * 375);
+    newBuddy.yPos = Math.floor(Math.random() * 475);
+    newBuddy.fullName = newBuddy.evolution + newBuddy.name;
     this.currEggs++;
-    this.byteBuddies.buddies.push(bought);
+    this.byteBuddies.buddies.push(newBuddy);
   }
 
   collectBuddy(buddy: Buddy) {
@@ -441,21 +456,113 @@ export class GameComponent implements OnInit, AfterViewInit {
     }
   }
 
-  breedChange(value: any) {
-    if (this.breedBuddy1 &&
-      this.breedBuddy2 &&
-      this.breedBuddy1.age === this.breedBuddy2.age &&
-      this.breedBuddy1.name === this.breedBuddy2.name) {
-      this.breedBuddy2 = undefined;
-      this.snackbarService.showToast('You have to select 2 different Buddies', 5000);
-    } else {
-      this.breedStats = new BreedStats();
-      this.breedStats.buddy1 = this.breedBuddy1;
-      this.breedStats.buddy2 = this.breedBuddy2;
-      this.breedStats.evolveChance = 50;
-      this.breedStats.sameChance = 25;
-      this.breedStats.devolveChance = 24;
+  breed1Change(value: any) {
+    this.breedBuddy1 = value;
+    this.getBreedStats();
+  }
+
+  breed2Change(value: any) {
+    this.breedBuddy2 = value;
+    this.getBreedStats();
+  }
+
+  getBreedStats() {
+    this.breedStats = undefined;
+    if (this.breedBuddy1 && this.breedBuddy2) {
+      if (this.breedBuddy1.age === this.breedBuddy2.age && this.breedBuddy1.name === this.breedBuddy2.name
+        && this.breedBuddy1.xPos === this.breedBuddy2.xPos && this.breedBuddy1.yPos === this.breedBuddy2.yPos) {
+        this.breedBuddy2 = undefined;
+        this.snackbarService.showToast('You have to select 2 different Buddies.', 5000);
+      } else if (this.breedBuddy1.evolution !== this.breedBuddy2.evolution) {
+        this.breedBuddy2 = undefined;
+        this.snackbarService.showToast('The buddies have to be at the same evolution level.', 5000);
+      } else if ((this.breedBuddy1.evolution === 'Kilo' && +this.byteBuddies.gpu.level <= 2) ||
+        (this.breedBuddy1.evolution === 'Mega' && +this.byteBuddies.gpu.level <= 3) ||
+        (this.breedBuddy1.evolution === 'Giga' && +this.byteBuddies.gpu.level <= 4) ||
+        (this.breedBuddy1.evolution === 'Tera' && +this.byteBuddies.gpu.level <= 5)) {
+        this.breedBuddy1 = undefined;
+        this.breedBuddy2 = undefined;
+        this.snackbarService.showToast('You need to upgrade your GPU to evolve past this level.', 5000);
+      } else {
+        this.breedStats = new BreedStats();
+        this.breedStats.buddy1 = this.breedBuddy1;
+        this.breedStats.buddy2 = this.breedBuddy2;
+        if (this.breedBuddy1.evolution === '') {
+          this.breedStats.evolveChance = 75;
+          this.breedStats.sameChance = 25;
+        } else if (this.breedBuddy1.evolution === 'Kilo') {
+          this.breedStats.evolveChance = 50;
+          this.breedStats.sameChance = 35;
+          this.breedStats.devolveChance = 15;
+        } else if (this.breedBuddy1.evolution === 'Mega') {
+          this.breedStats.evolveChance = 40;
+          this.breedStats.sameChance = 40;
+          this.breedStats.devolveChance = 20;
+        } else if (this.breedBuddy1.evolution === 'Giga') {
+          this.breedStats.evolveChance = 30;
+          this.breedStats.sameChance = 45;
+          this.breedStats.devolveChance = 25;
+        } else if (this.breedBuddy1.evolution === 'Tera') {
+          this.breedStats.evolveChance = 20;
+          this.breedStats.sameChance = 50;
+          this.breedStats.devolveChance = 30;
+        }
+      }
     }
+  }
+
+  breedBuddies() {
+    this.breedList = [];
+    this.byteBuddies.buddies.splice(this.byteBuddies.buddies.findIndex(b =>
+      b.xPos === this.breedBuddy1.xPos &&
+      b.yPos === this.breedBuddy1.yPos &&
+      b.age === this.breedBuddy1.age), 1);
+    this.byteBuddies.buddies.splice(this.byteBuddies.buddies.findIndex(b =>
+      b.xPos === this.breedBuddy2.xPos &&
+      b.yPos === this.breedBuddy2.yPos &&
+      b.age === this.breedBuddy2.age), 1);
+    const chance = Math.random();
+    const parent = Math.random() > 0.5 ? { ...this.breedBuddy1 } : { ...this.breedBuddy2 };
+    this.breedBuddy1 = undefined;
+    this.breedBuddy2 = undefined;
+
+    this.breedList = new Array<Buddy>(...this.byteBuddies.buddies);
+    let evolution = '';
+    if (chance <= 0.01) {
+      this.snackbarService.showToast('You bred a super rare Dragonbyte!');
+      this.getBuddy(this.allBuddies.find(b => b.name === 'Dragonbyte'), '');
+
+    } else if (chance > (100 - this.breedStats.evolveChance) / 100) {
+      if (parent.evolution === '') {
+        evolution = 'Kilo';
+      } else if (parent.evolution === 'Kilo') {
+        evolution = 'Mega';
+      } else if (parent.evolution === 'Mega') {
+        evolution = 'Giga';
+      } else if (parent.evolution === 'Giga') {
+        evolution = 'Tera';
+      }
+      this.snackbarService.showToast('You evolved a ' + evolution + parent.name + '!');
+      this.getBuddy(parent, evolution);
+
+    } else if (chance > (100 - this.breedStats.evolveChance - this.breedStats.sameChance) / 100) {
+      this.snackbarService.showToast('You bred another ' + parent.evolution + parent.name + '!');
+      this.getBuddy(parent, parent.evolution);
+
+    } else {
+      if (parent.evolution === 'Kilo') {
+        evolution = '';
+      } else if (parent.evolution === 'Mega') {
+        evolution = 'Kilo';
+      } else if (parent.evolution === 'Giga') {
+        evolution = 'Mega';
+      } else if (parent.evolution === 'Tera') {
+        evolution = 'Giga';
+      }
+      this.snackbarService.showToast('You bred a devolved ' + evolution + parent.name + '. :-(');
+      this.getBuddy(parent, evolution);
+    }
+    this.breedStats = undefined;
   }
 
   // Jeremys Code
