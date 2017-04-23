@@ -55,7 +55,11 @@ export class GameComponent implements OnInit, AfterViewInit {
     let newGame = true;
     if (localStorage.getItem('byteBuddies')) {
       newGame = false;
-      this.byteBuddies = JSON.parse(this.decryptSave(localStorage.getItem('byteBuddies')));
+      try {
+        this.byteBuddies = JSON.parse(this.decryptSave(localStorage.getItem('byteBuddies')));
+      } catch (e) {
+        this.byteBuddies = JSON.parse(localStorage.getItem('byteBuddies'));
+      }
       this.snackbarService.showToast('Game Loaded', 2500);
       this.currEggs = this.byteBuddies.buddies.filter(b => b.age < b.matureTime).length;
     } else {
@@ -165,7 +169,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       let lastType = -1;
       let number = 1;
       this.allAchievements.forEach(a => {
-        if(+lastType !== +a.type) {
+        if (+lastType !== +a.type) {
           number = 1;
           lastType = a.type;
         }
@@ -702,10 +706,472 @@ export class GameComponent implements OnInit, AfterViewInit {
     } else {
       stat.value++;
     }
+    this.tryAchievements(stat);
+  }
+
+  tryAchievements(stat: Stat) {
+    if (stat.name === 'Eggs Hatched (Rabbyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(4);
+          break;
+        case 2:
+          this.unlockAchievement(22);
+          break;
+        case 5:
+          this.unlockAchievement(40);
+          break;
+        case 25:
+          this.unlockAchievement(58);
+          break;
+        case 50:
+          this.unlockAchievement(76);
+          break;
+        case 100:
+          this.unlockAchievement(94);
+          break;
+        case 250:
+          this.unlockAchievement(112);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Centibyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(5);
+          break;
+        case 2:
+          this.unlockAchievement(23);
+          break;
+        case 5:
+          this.unlockAchievement(41);
+          break;
+        case 25:
+          this.unlockAchievement(59);
+          break;
+        case 50:
+          this.unlockAchievement(77);
+          break;
+        case 100:
+          this.unlockAchievement(95);
+          break;
+        case 250:
+          this.unlockAchievement(113);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Mantabyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(6);
+          break;
+        case 2:
+          this.unlockAchievement(24);
+          break;
+        case 5:
+          this.unlockAchievement(42);
+          break;
+        case 25:
+          this.unlockAchievement(60);
+          break;
+        case 50:
+          this.unlockAchievement(78);
+          break;
+        case 100:
+          this.unlockAchievement(96);
+          break;
+        case 250:
+          this.unlockAchievement(114);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Jellybyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(7);
+          break;
+        case 2:
+          this.unlockAchievement(25);
+          break;
+        case 5:
+          this.unlockAchievement(43);
+          break;
+        case 25:
+          this.unlockAchievement(61);
+          break;
+        case 50:
+          this.unlockAchievement(79);
+          break;
+        case 100:
+          this.unlockAchievement(97);
+          break;
+        case 250:
+          this.unlockAchievement(115);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Trilobyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(8);
+          break;
+        case 2:
+          this.unlockAchievement(26);
+          break;
+        case 5:
+          this.unlockAchievement(44);
+          break;
+        case 25:
+          this.unlockAchievement(62);
+          break;
+        case 50:
+          this.unlockAchievement(80);
+          break;
+        case 100:
+          this.unlockAchievement(98);
+          break;
+        case 250:
+          this.unlockAchievement(116);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Ammobyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(9);
+          break;
+        case 2:
+          this.unlockAchievement(27);
+          break;
+        case 5:
+          this.unlockAchievement(45);
+          break;
+        case 25:
+          this.unlockAchievement(63);
+          break;
+        case 50:
+          this.unlockAchievement(81);
+          break;
+        case 100:
+          this.unlockAchievement(99);
+          break;
+        case 250:
+          this.unlockAchievement(117);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Goldiebyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(10);
+          break;
+        case 2:
+          this.unlockAchievement(28);
+          break;
+        case 5:
+          this.unlockAchievement(46);
+          break;
+        case 25:
+          this.unlockAchievement(64);
+          break;
+        case 50:
+          this.unlockAchievement(82);
+          break;
+        case 100:
+          this.unlockAchievement(100);
+          break;
+        case 250:
+          this.unlockAchievement(118);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Narwhalbyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(11);
+          break;
+        case 2:
+          this.unlockAchievement(29);
+          break;
+        case 5:
+          this.unlockAchievement(47);
+          break;
+        case 25:
+          this.unlockAchievement(65);
+          break;
+        case 50:
+          this.unlockAchievement(83);
+          break;
+        case 100:
+          this.unlockAchievement(101);
+          break;
+        case 250:
+          this.unlockAchievement(119);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Starbyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(12);
+          break;
+        case 2:
+          this.unlockAchievement(30);
+          break;
+        case 5:
+          this.unlockAchievement(48);
+          break;
+        case 25:
+          this.unlockAchievement(66);
+          break;
+        case 50:
+          this.unlockAchievement(84);
+          break;
+        case 100:
+          this.unlockAchievement(102);
+          break;
+        case 250:
+          this.unlockAchievement(120);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Puffbyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(13);
+          break;
+        case 2:
+          this.unlockAchievement(31);
+          break;
+        case 5:
+          this.unlockAchievement(49);
+          break;
+        case 25:
+          this.unlockAchievement(67);
+          break;
+        case 50:
+          this.unlockAchievement(85);
+          break;
+        case 100:
+          this.unlockAchievement(103);
+          break;
+        case 250:
+          this.unlockAchievement(121);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Turtlebyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(14);
+          break;
+        case 2:
+          this.unlockAchievement(32);
+          break;
+        case 5:
+          this.unlockAchievement(50);
+          break;
+        case 25:
+          this.unlockAchievement(68);
+          break;
+        case 50:
+          this.unlockAchievement(86);
+          break;
+        case 100:
+          this.unlockAchievement(104);
+          break;
+        case 250:
+          this.unlockAchievement(122);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Pigbyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(15);
+          break;
+        case 2:
+          this.unlockAchievement(33);
+          break;
+        case 5:
+          this.unlockAchievement(51);
+          break;
+        case 25:
+          this.unlockAchievement(69);
+          break;
+        case 50:
+          this.unlockAchievement(87);
+          break;
+        case 100:
+          this.unlockAchievement(105);
+          break;
+        case 250:
+          this.unlockAchievement(123);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Mousiebyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(16);
+          break;
+        case 2:
+          this.unlockAchievement(34);
+          break;
+        case 5:
+          this.unlockAchievement(52);
+          break;
+        case 25:
+          this.unlockAchievement(70);
+          break;
+        case 50:
+          this.unlockAchievement(88);
+          break;
+        case 100:
+          this.unlockAchievement(106);
+          break;
+        case 250:
+          this.unlockAchievement(124);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Crabbyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(17);
+          break;
+        case 2:
+          this.unlockAchievement(35);
+          break;
+        case 5:
+          this.unlockAchievement(53);
+          break;
+        case 25:
+          this.unlockAchievement(71);
+          break;
+        case 50:
+          this.unlockAchievement(89);
+          break;
+        case 100:
+          this.unlockAchievement(107);
+          break;
+        case 250:
+          this.unlockAchievement(125);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Horsiebyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(18);
+          break;
+        case 2:
+          this.unlockAchievement(36);
+          break;
+        case 5:
+          this.unlockAchievement(54);
+          break;
+        case 25:
+          this.unlockAchievement(72);
+          break;
+        case 50:
+          this.unlockAchievement(90);
+          break;
+        case 100:
+          this.unlockAchievement(108);
+          break;
+        case 250:
+          this.unlockAchievement(126);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Octobyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(19);
+          break;
+        case 2:
+          this.unlockAchievement(37);
+          break;
+        case 5:
+          this.unlockAchievement(55);
+          break;
+        case 25:
+          this.unlockAchievement(73);
+          break;
+        case 50:
+          this.unlockAchievement(91);
+          break;
+        case 100:
+          this.unlockAchievement(109);
+          break;
+        case 250:
+          this.unlockAchievement(127);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Geoffreybyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(20);
+          break;
+        case 2:
+          this.unlockAchievement(38);
+          break;
+        case 5:
+          this.unlockAchievement(56);
+          break;
+        case 25:
+          this.unlockAchievement(74);
+          break;
+        case 50:
+          this.unlockAchievement(92);
+          break;
+        case 100:
+          this.unlockAchievement(110);
+          break;
+        case 250:
+          this.unlockAchievement(128);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Dragonbyte)') {
+      switch(stat.value) {
+        case 1:
+          this.unlockAchievement(21);
+          break;
+        case 2:
+          this.unlockAchievement(39);
+          break;
+        case 5:
+          this.unlockAchievement(57);
+          break;
+        case 25:
+          this.unlockAchievement(75);
+          break;
+        case 50:
+          this.unlockAchievement(93);
+          break;
+        case 100:
+          this.unlockAchievement(111);
+          break;
+      }
+    } else if (stat.name === 'Eggs Hatched (Total)') {
+      switch(stat.value) {
+        case 50:
+          this.unlockAchievement(2);
+          break;
+        case 100:
+          this.unlockAchievement(129);
+          break;
+        case 500:
+          this.unlockAchievement(130);
+          break;
+        case 1000:
+          this.unlockAchievement(131);
+          break;
+        case 2500:
+          this.unlockAchievement(132);
+          break;
+        case 5000:
+          this.unlockAchievement(133);
+          break;
+      }
+    }
+    // zoology - 20 (1 of all)
+    // 134 = 10
+    // 135 = 50
+    // 136 = 100
+
+    // 137 - puff
+    // old friends - 1
   }
 
   checkAchievement(id: any): boolean {
-    return this.byteBuddies.achievements.findIndex(a => +a === +id) > -1;
+    return this.byteBuddies.achievements.findIndex(aid => +aid === +id) > -1;
   }
 
   unlockAchievement(id: number) {
@@ -713,6 +1179,13 @@ export class GameComponent implements OnInit, AfterViewInit {
       this.byteBuddies.achievements.push(id);
       const chievo = this.allAchievements.find(a => +a.ID === +id)
       this.toasts.push({ severity: 'info', summary: 'Achievement Unlocked', detail: chievo.name2 });
+
+      if (chievo.byteReward) {
+        this.byteBuddies.byteCoins += +chievo.byteReward;
+      }
+      if (chievo.goldReward) {
+        this.byteBuddies.goldenBits += +chievo.goldReward;
+      }
     }
   }
 
