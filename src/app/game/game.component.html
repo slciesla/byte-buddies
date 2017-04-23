@@ -199,7 +199,7 @@
             <div style="height: 494px; overflow-y: automatic;">
               <div *ngFor="let chiev of allAchievements">
                 <div class="mdl-grid achievement-box" [ngClass]="{'achieved': checkAchievement(chiev.ID)}" style="padding: 0; font-size: 12px; line-height: 12px;">
-                  <div class="achievement-image" style="padding-right: 5px; background-image: url('assets/6.png');">
+                  <div class="achievement-image" style="padding-right: 5px; background-image: url({{chiev.image}});">
                   </div>
                   <div style="width: calc(100% - 55px);">
                     <div class="mdl-grid">
