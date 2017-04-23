@@ -13,6 +13,7 @@ export class AdminComponent implements OnInit {
   item: FirebaseListObservable<any>;
 
   public form: FormGroup;
+  public form2: FormGroup;
   public name = new FormControl();
   public initCost = new FormControl();
   public minPrice = new FormControl();
@@ -20,6 +21,11 @@ export class AdminComponent implements OnInit {
   public deathRate = new FormControl();
   public requiredCPU = new FormControl();
   public collectCost = new FormControl();
+  public name2 = new FormControl();
+  public ID = new FormControl();
+  public description = new FormControl();
+  public byteReward = new FormControl();
+  public goldReward = new FormControl();
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -31,12 +37,26 @@ export class AdminComponent implements OnInit {
       'requiredCPU': this.requiredCPU,
       'collectCost': this.collectCost
     });
+    this.form2 = this.fb.group({
+      'name2': this.name2,
+      'ID': this.ID,
+      'description': this.description,
+      'byteReward': this.byteReward,
+      'goldReward': this.goldReward
+    });
   }
 
   Save() {
     const toSend = this.af.database.list(`/buddies/`);
     toSend.push(this.form.value).key;
     this.snackbarService.showToast('Created ' + this.name.value, 1500);
+    this.form.reset();
+  }
+
+  Save2() {
+    const toSend = this.af.database.list(`/achievements/`);
+    toSend.push(this.form.value).key;
+    this.snackbarService.showToast('Created ' + this.name2.value, 1500);
     this.form.reset();
   }
 
