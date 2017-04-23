@@ -16,9 +16,9 @@ import { Stat } from '../models/stat';
 export class GameComponent implements OnInit, AfterViewInit {
   @ViewChild('hddCanvas') hddCanvas;
   @ViewChild('ssdCanvas') ssdCanvas;
-  private byteBuddies: ByteBuddies;
   private ticks: number;
   private saveTicks: number;
+  byteBuddies: ByteBuddies;
   allBuddies: Buddy[];
   purchaseableBuddies: Buddy[];
   allCpus: ComputerComponent[];
@@ -43,10 +43,6 @@ export class GameComponent implements OnInit, AfterViewInit {
   breedStats: BreedStats;
   breedList: Buddy[];
   loading = true;
-
-  // Jeremys Code
-
-  // End
 
   constructor(private snackbarService: MdlSnackbarService, private af: AngularFire) { }
 
@@ -152,10 +148,6 @@ export class GameComponent implements OnInit, AfterViewInit {
         this.nextRam = undefined;
       }
     });
-
-    // Jeremys Code
-
-    // End
   }
 
   ngAfterViewInit() {
@@ -685,9 +677,5 @@ export class GameComponent implements OnInit, AfterViewInit {
       stat.value++;
     }
   }
-
-  // Jeremys Code
-
-  // End
 
 }

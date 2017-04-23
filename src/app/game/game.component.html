@@ -44,7 +44,7 @@
   </div>
   <div style="min-width: 420px;">
     <kendo-tabstrip>
-      <kendo-tabstrip-tab [title]="'Byte Buddies'">
+      <kendo-tabstrip-tab [title]="'Byte Buddies'" [selected]="true">
         <ng-template kendoTabContent>
           <kendo-tabstrip>
             <kendo-tabstrip-tab [title]="'Purchase Eggs'" [selected]="true">
@@ -177,7 +177,7 @@
           </div>
         </ng-template>
       </kendo-tabstrip-tab>
-      <kendo-tabstrip-tab [title]="'Stats'" [selected]="true">
+      <kendo-tabstrip-tab [title]="'Stats'">
         <ng-template kendoTabContent>
           <div style="height: 494px; overflow-y: automatic;">
             <div *ngIf="byteBuddies.stats.length === 0">
