@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { DomSanitizer } from "@angular/platform-browser";
 import { MdlSnackbarService } from '@angular-mdl/core';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
 import { Message } from 'primeng/primeng';
@@ -48,7 +49,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   loading = true;
   toasts: Message[] = [];
 
-  constructor(private snackbarService: MdlSnackbarService, private af: AngularFire) { }
+  constructor(private snackbarService: MdlSnackbarService, private af: AngularFire, private domSanitizer: DomSanitizer) { }
 
   ngOnInit() {
     let newGame = true;
@@ -75,7 +76,7 @@ export class GameComponent implements OnInit, AfterViewInit {
         });
         if (newGame) {
           this.currEggs = 1;
-          this.byteBuddies.buddies.push({ ...buddies[0] });
+          this.byteBuddies.buddies.push({ ...buddies.find(b => b.name === 'Rabbyte') });
           this.byteBuddies.buddies[0].age = 0;
           this.byteBuddies.buddies[0].fullName = this.byteBuddies.buddies[0].name;
           this.byteBuddies.buddies[0].evolution = '';
@@ -161,8 +162,16 @@ export class GameComponent implements OnInit, AfterViewInit {
         };
         return +a.type < +b.type ? -1 : 1;
       });
+      let lastType = -1;
+      let number = 1;
       this.allAchievements.forEach(a => {
-        a.image = 'assets/' + a.type + '.png';
+        if(lastType !== a.type) {
+          number = 1;
+          lastType = a.type;
+        }
+        a.image = this.domSanitizer.bypassSecurityTrustStyle('url(assets/' + a.type + '.png');
+        a.colorClass = 'ach-' + number;
+        number++;
       });
     });
   }
@@ -693,7 +702,6 @@ export class GameComponent implements OnInit, AfterViewInit {
     } else {
       stat.value++;
     }
-    this.toasts.push({ severity: 'info', summary: 'Achievement Unlocked', detail: (name + ' ' + stat.value) });
   }
 
   checkAchievement(id: any): boolean {
@@ -703,6 +711,8 @@ export class GameComponent implements OnInit, AfterViewInit {
   unlockAchievement(id: number) {
     if (!this.checkAchievement(id)) {
       this.byteBuddies.achievements.push(id);
+      const chievo = this.allAchievements.find(a => +a.ID === +id)
+      this.toasts.push({ severity: 'info', summary: 'Achievement Unlocked', detail: chievo.name2 });
     }
   }
 

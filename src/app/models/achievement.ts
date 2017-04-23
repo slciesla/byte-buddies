@@ -4,6 +4,7 @@ export class Achievement {
     description: string;
     byteReward: number;
     goldReward: number;
-    image: string;
+    image: any;
     type: number;
+    colorClass: string;
 }
