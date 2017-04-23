@@ -165,7 +165,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       let lastType = -1;
       let number = 1;
       this.allAchievements.forEach(a => {
-        if(lastType !== a.type) {
+        if(+lastType !== +a.type) {
           number = 1;
           lastType = a.type;
         }
