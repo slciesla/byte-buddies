@@ -24,7 +24,7 @@
             <button kendoButton (click)="collectBuddy(selectedBuddy)" [disabled]="selectedBuddy.collectCost > byteBuddies.goldenBits"
               class="golden-bits">
               Collect in SSD for {{selectedBuddy.collectCost}}gb
-            </button>
+              </button>
           </div>
         </ng-template>
       </kendo-tabstrip-tab>
@@ -87,11 +87,17 @@
               <ng-template kendoTabContent>
                 <div style="min-height: 494px">
                   <div>
-                    You can only clone evolved buddies (it's cheaper to just buy new eggs if you want more of a base type). Select a buddy to
-                    see the costs to clone. You can't clone past the egg or buddy limit.
+                    The cloning technology only works on evolved Buddies. Select one to see the costs to clone. You can't clone past the egg or buddy limit.
                   </div>
-                  <kendo-dropdownlist [data]="byteBuddies.buddies" [value]="cloneBuddy" [textField]="'name'" [valueField]="'age'" (selectionChange)="cloneChange($event)">
+                  <kendo-dropdownlist [data]="byteBuddies.buddies" [ngModel]="cloneBuddy" [textField]="'fullName'" [valueField]="'age'" (selectionChange)="cloneChange($event)">
                   </kendo-dropdownlist>
+                  <div *ngIf="cloneStats">
+                    <div>ByteCoin Cost: {{cloneStats.byteCoinCost}}bytc</div>
+                    <div>GoldenBit Cost: {{cloneStats.goldenBitCost}}gb</div>
+                    <button kendoButton (click)="clonedBuddy()" [primary]="true" [disabled]="currEggs === byteBuddies.ram?.capacity ||
+                     byteBuddies.buddies.length === byteBuddies.hdd.capacity || byteBuddies.byteCoins < cloneStats.byteCoinCost || 
+                     byteBuddies.goldenBits < cloneStats.goldenBitCost">Clone!</button>
+                  </div>
                 </div>
               </ng-template>
             </kendo-tabstrip-tab>

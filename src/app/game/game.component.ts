@@ -485,12 +485,21 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   cloneChange(value: any) {
-    if (this.cloneBuddy) {
+    this.cloneBuddy = undefined;
+    this.cloneStats = undefined;
+    if (value && value.evolution !== '') {
+      this.cloneBuddy = value;
       this.cloneStats = new CloneStats();
       this.cloneStats.buddy = this.cloneBuddy;
-      this.cloneStats.byteCoinCost = 1;
-      this.cloneStats.goldenBitCost = 1;
+      this.cloneStats.byteCoinCost = this.cloneBuddy.sellPrice * 5;
+      this.cloneStats.goldenBitCost = this.cloneBuddy.collectCost * 5;
     }
+  }
+
+  clonedBuddy() {
+    this.byteBuddies.byteCoins -= this.cloneStats.byteCoinCost;
+    this.byteBuddies.goldenBits -= this.cloneStats.goldenBitCost;
+    this.getBuddy(this.cloneBuddy, this.cloneBuddy.evolution);
   }
 
   breed1Change(value: any) {
