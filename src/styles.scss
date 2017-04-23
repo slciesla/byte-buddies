@@ -11,9 +11,6 @@ $color-accent-contrast: $color-dark-contrast;
 @import '~@angular-mdl/popover/popover';
 @import '~@angular-mdl/select/select';
 
-@import '~primeng/resources/primeng.min.css';
-@import '~primeng/resources/themes/omega/theme.css';
-
 body {
     overflow-y: scroll;
 }

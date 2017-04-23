@@ -690,7 +690,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     } else {
       stat.value++;
     }
-    this.toasts.push({ severity: 'info', summary: 'Achievement Unlocked', detail: name + ' ' + stat.value });
+    this.toasts.push({ severity: 'info', summary: 'Achievement Unlocked', detail: (name + ' ' + stat.value) });
   }
 
   checkAchievement(id: any): boolean {
