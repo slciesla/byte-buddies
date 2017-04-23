@@ -55,7 +55,11 @@ export class GameComponent implements OnInit, AfterViewInit {
     let newGame = true;
     if (localStorage.getItem('byteBuddies')) {
       newGame = false;
-      this.byteBuddies = JSON.parse(this.decryptSave(localStorage.getItem('byteBuddies')));
+      try {
+        this.byteBuddies = JSON.parse(this.decryptSave(localStorage.getItem('byteBuddies')));
+      } catch (e) {
+        this.byteBuddies = JSON.parse(localStorage.getItem('byteBuddies'));
+      }
       this.snackbarService.showToast('Game Loaded', 2500);
       this.currEggs = this.byteBuddies.buddies.filter(b => b.age < b.matureTime).length;
     } else {
@@ -165,7 +169,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       let lastType = -1;
       let number = 1;
       this.allAchievements.forEach(a => {
-        if(+lastType !== +a.type) {
+        if (+lastType !== +a.type) {
           number = 1;
           lastType = a.type;
         }
