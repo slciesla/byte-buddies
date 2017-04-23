@@ -27,6 +27,7 @@ export class AdminComponent implements OnInit {
   public byteReward = new FormControl();
   public goldReward = new FormControl();
   public image = new FormControl();
+  public type = new FormControl();
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -44,7 +45,8 @@ export class AdminComponent implements OnInit {
       'description': this.description,
       'byteReward': this.byteReward,
       'goldReward': this.goldReward,
-      'image': this.image
+      'image': this.image,
+      'type': this.type
     });
   }
 
