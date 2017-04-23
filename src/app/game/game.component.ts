@@ -467,23 +467,25 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   getBreedStats() {
+    let success = false;
     this.breedStats = undefined;
-    if (this.breedBuddy1 && this.breedBuddy2) {
+    if (this.breedBuddy1 && this.breedBuddy1.age < this.breedBuddy1.matureTime) {
+      this.snackbarService.showToast('The buddy needs to have hatched to breed it!', 5000);
+    } else if (this.breedBuddy2 && this.breedBuddy2.age < this.breedBuddy2.matureTime) {
+      this.snackbarService.showToast('The buddy needs to have hatched to breed it!', 5000);
+    } else if (this.breedBuddy1 && this.breedBuddy2) {
       if (this.breedBuddy1.age === this.breedBuddy2.age && this.breedBuddy1.name === this.breedBuddy2.name
         && this.breedBuddy1.xPos === this.breedBuddy2.xPos && this.breedBuddy1.yPos === this.breedBuddy2.yPos) {
-        this.breedBuddy2 = undefined;
         this.snackbarService.showToast('You have to select 2 different Buddies.', 5000);
       } else if (this.breedBuddy1.evolution !== this.breedBuddy2.evolution) {
-        this.breedBuddy2 = undefined;
         this.snackbarService.showToast('The buddies have to be at the same evolution level.', 5000);
       } else if ((this.breedBuddy1.evolution === 'Kilo' && +this.byteBuddies.gpu.level <= 2) ||
         (this.breedBuddy1.evolution === 'Mega' && +this.byteBuddies.gpu.level <= 3) ||
         (this.breedBuddy1.evolution === 'Giga' && +this.byteBuddies.gpu.level <= 4) ||
         (this.breedBuddy1.evolution === 'Tera' && +this.byteBuddies.gpu.level <= 5)) {
-        this.breedBuddy1 = undefined;
-        this.breedBuddy2 = undefined;
         this.snackbarService.showToast('You need to upgrade your GPU to evolve past this level.', 5000);
       } else {
+        success = true;
         this.breedStats = new BreedStats();
         this.breedStats.buddy1 = this.breedBuddy1;
         this.breedStats.buddy2 = this.breedBuddy2;

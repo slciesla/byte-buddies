@@ -63,9 +63,9 @@
                     <div>
                       Select 2 byte buddies to breed them. BOTH WILL BE LOST WHEN BRED - Be sure to clone if you want to keep him!
                     </div>
-                    <kendo-dropdownlist [data]="breedList" [ngModel]="breedBuddy1" [textField]="'fullName'" [valueField]="'age'" (selectionChange)="breed1Change($event)">
+                    <kendo-dropdownlist [data]="byteBuddies.buddies" [ngModel]="breedBuddy1" [textField]="'fullName'" [valueField]="'age'" (selectionChange)="breed1Change($event)">
                   </kendo-dropdownlist>
-                  <kendo-dropdownlist [data]="breedList" [ngModel]="breedBuddy2" [textField]="'fullName'" [valueField]="'age'" (selectionChange)="breed2Change($event)">
+                  <kendo-dropdownlist [data]="byteBuddies.buddies" [ngModel]="breedBuddy2" [textField]="'fullName'" [valueField]="'age'" (selectionChange)="breed2Change($event)">
                   </kendo-dropdownlist>
                     <br />
                     <div *ngIf="breedStats">
