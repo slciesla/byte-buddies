@@ -43,7 +43,7 @@
           <kendo-tabstrip>
             <kendo-tabstrip-tab [title]="'Purchase Eggs'" [selected]="true">
               <ng-template kendoTabContent>
-                <div *ngFor="let buddy of allBuddies">
+                <div *ngFor="let buddy of purchaseableBuddies">
                   <div>{{buddy.name}}</div>
                   <div>
                     <button kendoButton (click)="buyBuddy(buddy)" [primary]="true" [disabled]="buddy.initCost > byteBuddies.byteCoins ||
@@ -55,12 +55,22 @@
             </kendo-tabstrip-tab>
             <kendo-tabstrip-tab [title]="'Cloning'">
               <ng-template kendoTabContent>
-                <kendo-dropdownlist [data]="byteBuddies.buddies" [value]="cloneBuddy" [textField]="'name' + 'age'" [valueField]="'value'">
+                <div>
+                  You can only clone evolved buddies (it's cheaper to just buy new eggs if you want more of a base type). Select a buddy to see the costs to clone.
+                  You can't clone past the egg or buddy limit.
+                </div>
+                <kendo-dropdownlist [data]="byteBuddies.buddies" [value]="cloneBuddy" [textField]="'name'" [valueField]="'age'" (selectionChange)="cloneChange($event)">
                 </kendo-dropdownlist>
               </ng-template>
             </kendo-tabstrip-tab>
             <kendo-tabstrip-tab [title]="'Breeding'">
               <ng-template kendoTabContent>
+                <div *ngIf="+byteBuddies.gpu.level === 1">
+                  You need the first GPU upgrade in order to breed your Byte Buddies.
+                </div>
+                <div *ngIf="+byteBuddies.gpu.level > 1">
+                  Select 2 byte buddies to breed them. BOTH WILL BE LOST WHEN BRED - Be sure to clone if you want to keep him!
+                </div>
               </ng-template>
             </kendo-tabstrip-tab>
           </kendo-tabstrip>

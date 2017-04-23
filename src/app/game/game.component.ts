@@ -17,6 +17,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   private ticks: number;
   private saveTicks: number;
   allBuddies: Buddy[];
+  purchaseableBuddies: Buddy[];
   allCpus: ComputerComponent[];
   allGpus: ComputerComponent[];
   allRams: ComputerComponent[];
@@ -32,6 +33,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   nextGpu: ComputerComponent;
   nextRam: ComputerComponent;
   currEggs: number;
+  cloneBuddy: Buddy;
 
   // Jeremys Code
 
@@ -63,14 +65,17 @@ export class GameComponent implements OnInit, AfterViewInit {
           this.byteBuddies.buddies[0].evolution = '';
           this.byteBuddies.buddies[0].xPos = Math.floor(Math.random() * 375);
           this.byteBuddies.buddies[0].yPos = Math.floor(Math.random() * 475);
+          this.purchaseableBuddies = this.allBuddies.filter(b => +b.requiredCPU === 1);
+        } else {
+          this.purchaseableBuddies = this.allBuddies.filter(b => +b.requiredCPU <= +this.byteBuddies.cpu.level);
         }
       }
     });
 
     this.af.database.list('/components/CPU/').subscribe((cpus: ComputerComponent[]) => {
       this.allCpus = cpus.sort((a, b) => {
-        if (a.$key === b.$key) { return 0; };
-        return +a.$key < +b.$key ? -1 : 1;
+        if (a.level === b.level) { return 0; };
+        return +a.level < +b.level ? -1 : 1;
       });
       if (newGame || !this.byteBuddies.cpu) {
         this.byteBuddies.cpu = cpus[0];
@@ -85,8 +90,8 @@ export class GameComponent implements OnInit, AfterViewInit {
 
     this.af.database.list('/components/HDD/').subscribe((hdds: ComputerComponent[]) => {
       this.allHdds = hdds.sort((a, b) => {
-        if (a.$key === b.$key) { return 0; };
-        return +a.$key < +b.$key ? -1 : 1;
+        if (a.level === b.level) { return 0; };
+        return +a.level < +b.level ? -1 : 1;
       });
       if (newGame || !this.byteBuddies.hdd) {
         this.byteBuddies.hdd = hdds[0];
@@ -101,8 +106,8 @@ export class GameComponent implements OnInit, AfterViewInit {
 
     this.af.database.list('/components/GPU/').subscribe((gpus: ComputerComponent[]) => {
       this.allGpus = gpus.sort((a, b) => {
-        if (a.$key === b.$key) { return 0; };
-        return +a.$key < +b.$key ? -1 : 1;
+        if (a.level === b.level) { return 0; };
+        return +a.level < +b.level ? -1 : 1;
       });
       if (newGame || !this.byteBuddies.gpu) {
         this.byteBuddies.gpu = gpus[0];
@@ -117,8 +122,8 @@ export class GameComponent implements OnInit, AfterViewInit {
 
     this.af.database.list('/components/RAM/').subscribe((rams: ComputerComponent[]) => {
       this.allRams = rams.sort((a, b) => {
-        if (a.$key === b.$key) { return 0; };
-        return +a.$key < +b.$key ? -1 : 1;
+        if (a.level === b.level) { return 0; };
+        return +a.level < +b.level ? -1 : 1;
       });
       if (newGame || !this.byteBuddies.ram) {
         this.byteBuddies.ram = rams[0];
@@ -164,6 +169,11 @@ export class GameComponent implements OnInit, AfterViewInit {
       this.saveTicks = 0;
       this.saveGame();
     }
+
+    if (+this.byteBuddies.byteCoins === 0 && this.byteBuddies.buddies.length === 0) {
+      this.byteBuddies.byteCoins = 1;
+      this.snackbarService.showToast('You should avoid spending your last coin. Here\'s a free one', 5000);
+    }
   }
 
   saveGame() {
@@ -178,7 +188,9 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   buyCpu() {
+    this.byteBuddies.byteCoins -= +this.nextCpu.cost;
     this.byteBuddies.cpu = this.nextCpu;
+    this.purchaseableBuddies = this.allBuddies.filter(b => +b.requiredCPU <= +this.byteBuddies.cpu.level);
     const nextIndex = this.allCpus.findIndex(c => c.name === this.byteBuddies.cpu.name) + 1;
     if (nextIndex < this.allCpus.length) {
       this.nextCpu = this.allCpus[nextIndex];
@@ -188,6 +200,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   buyHdd() {
+    this.byteBuddies.byteCoins -= +this.nextHdd.cost;
     this.byteBuddies.hdd = this.nextHdd;
     const nextIndex = this.allHdds.findIndex(c => c.name === this.byteBuddies.hdd.name) + 1;
     if (nextIndex < this.allHdds.length) {
@@ -198,6 +211,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   buyGpu() {
+    this.byteBuddies.byteCoins -= +this.nextGpu.cost;
     this.byteBuddies.gpu = this.nextGpu;
     const nextIndex = this.allGpus.findIndex(c => c.name === this.byteBuddies.gpu.name) + 1;
     if (nextIndex < this.allGpus.length) {
@@ -208,6 +222,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   buyRam() {
+    this.byteBuddies.byteCoins -= +this.nextRam.cost;
     this.byteBuddies.ram = this.nextRam;
     const nextIndex = this.allRams.findIndex(c => c.name === this.byteBuddies.ram.name) + 1;
     if (nextIndex < this.allRams.length) {
@@ -409,6 +424,10 @@ export class GameComponent implements OnInit, AfterViewInit {
     bought.xPos = Math.floor(Math.random() * 375);
     bought.yPos = Math.floor(Math.random() * 475);
     this.byteBuddies.ssdBuddies.push(bought);
+  }
+
+  cloneChange(value: any) {
+    console.log(value);
   }
 
   // Jeremys Code
