@@ -4,4 +4,5 @@ export class Achievement {
     desc: string;
     byteReward: number;
     goldReward: number;
+    image: string;
 }

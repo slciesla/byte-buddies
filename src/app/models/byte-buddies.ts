@@ -1,5 +1,6 @@
 import { Buddy } from './buddy';
 import { ComputerComponent } from './computer-component';
+import { Stat } from './stat';
 
 export class ByteBuddies {
     byteCoins: number;
@@ -7,6 +8,7 @@ export class ByteBuddies {
     buddies: Buddy[];
     ssdBuddies: Buddy[];
     achievements: number[];
+    stats: Stat[];
     hdd: ComputerComponent;
     ram: ComputerComponent;
     cpu: ComputerComponent;
