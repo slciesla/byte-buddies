@@ -16,7 +16,7 @@ import {
   MdlSnackbarService
 } from '@angular-mdl/core';
 import { AngularFireModule } from 'angularfire2';
-
+import { GrowlModule } from 'primeng/primeng';
 
 import { AppComponent } from './app.component';
 import { AdminComponent } from './admin/admin.component';
@@ -59,6 +59,7 @@ export const firebaseConfig = {
     LayoutModule,
     MdlDialogOutletModule,
     MdlSnackbaModule,
+    GrowlModule,
     AngularFireModule.initializeApp(firebaseConfig)
   ],
   entryComponents: [

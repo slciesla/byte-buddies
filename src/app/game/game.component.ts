@@ -1,12 +1,14 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MdlSnackbarService } from '@angular-mdl/core';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
+import { Message } from 'primeng/primeng';
 import { ByteBuddies } from '../models/byte-buddies';
 import { Buddy } from '../models/buddy';
 import { ComputerComponent } from '../models/computer-component';
 import { BreedStats } from '../models/breed-stats';
 import { CloneStats } from '../models/clone-stats';
 import { Stat } from '../models/stat';
+import { Achievement } from '../models/achievement';
 
 @Component({
   selector: 'app-game',
@@ -20,6 +22,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   private saveTicks: number;
   byteBuddies: ByteBuddies;
   allBuddies: Buddy[];
+  allAchievements: Achievement[];
   purchaseableBuddies: Buddy[];
   allCpus: ComputerComponent[];
   allGpus: ComputerComponent[];
@@ -43,6 +46,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   breedStats: BreedStats;
   breedList: Buddy[];
   loading = true;
+  toasts: Message[] = [];
 
   constructor(private snackbarService: MdlSnackbarService, private af: AngularFire) { }
 
@@ -60,6 +64,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       this.byteBuddies.buddies = new Array<Buddy>();
       this.byteBuddies.ssdBuddies = new Array<Buddy>();
       this.byteBuddies.stats = new Array<Stat>();
+      this.byteBuddies.achievements = new Array<number>();
     }
     this.af.database.list('/buddies/').subscribe((buddies: Buddy[]) => {
       if (!this.allBuddies) {
@@ -147,6 +152,15 @@ export class GameComponent implements OnInit, AfterViewInit {
       } else {
         this.nextRam = undefined;
       }
+    });
+
+    this.af.database.list('/achievements/').subscribe((achs: Achievement[]) => {
+      this.allAchievements = achs.sort((a, b) => {
+        if (a.type === b.type) {
+          return +a.byteReward < +b.byteReward ? -1 : 1;
+        };
+        return +a.type < +b.type ? -1 : 1;
+      });
     });
   }
 
@@ -675,6 +689,17 @@ export class GameComponent implements OnInit, AfterViewInit {
       });
     } else {
       stat.value++;
+    }
+    this.toasts.push({ severity: 'info', summary: 'Achievement Unlocked', detail: (name + ' ' + stat.value) });
+  }
+
+  checkAchievement(id: any): boolean {
+    return this.byteBuddies.achievements.findIndex(a => +a === +id) > -1;
+  }
+
+  unlockAchievement(id: number) {
+    if (!this.checkAchievement(id)) {
+      this.byteBuddies.achievements.push(id);
     }
   }
 
