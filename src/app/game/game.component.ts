@@ -280,7 +280,16 @@ export class GameComponent implements OnInit, AfterViewInit {
       buddy.width = 36;
       buddy.height = 42;
       if (buddy.age > buddy.matureTime) {
-        const mod = 15;
+        let mod = 15;
+        if (buddy.evolution === 'Kilo') {
+          mod = 12;
+        } else if (buddy.evolution === 'Mega') {
+          mod = 9;
+        } else if (buddy.evolution === 'Giga') {
+          mod = 6;
+        } else if (buddy.evolution === 'Tera') {
+          mod = 3;
+        }
         buddy.width = Math.floor(img.width / mod);
         buddy.height = Math.floor(img.height / mod);
       }
@@ -334,7 +343,16 @@ export class GameComponent implements OnInit, AfterViewInit {
       buddy.width = 36;
       buddy.height = 42;
       if (buddy.age > buddy.matureTime) {
-        const mod = 15;
+        let mod = 15;
+        if (buddy.evolution === 'Kilo') {
+          mod = 12;
+        } else if (buddy.evolution === 'Mega') {
+          mod = 9;
+        } else if (buddy.evolution === 'Giga') {
+          mod = 6;
+        } else if (buddy.evolution === 'Tera') {
+          mod = 3;
+        }
         buddy.width = Math.floor(img.width / mod);
         buddy.height = Math.floor(img.height / mod);
       }
@@ -374,9 +392,19 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   private calculatePrice(buddy: Buddy) {
-    buddy.sellPrice = +(buddy.age > buddy.matureTime ?
+    let price = +(buddy.age > buddy.matureTime ?
       Math.floor(+buddy.minPrice + Math.log(Math.ceil((buddy.age - buddy.matureTime) / 50)) * +buddy.minPrice) :
       0);
+    if (buddy.evolution === 'Kilo') {
+      price = Math.floor(price * 1.5);
+    } else if (buddy.evolution === 'Mega') {
+      price *= 4;
+    } else if (buddy.evolution === 'Giga') {
+      price *= 10;
+    } else if (buddy.evolution === 'Tera') {
+      price *= 25;
+    }
+    buddy.sellPrice = price;
   }
 
   sellBuddy() {
@@ -394,6 +422,16 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.snackbarService.showToast('Sold ' + this.selectedBuddy.name + ' for ' + this.selectedBuddy.sellPrice +
       'bytc' + (numGoldens > 0 ? (' and ' + numGoldens + ' gb') : ''), 2500);
     this.selectedBuddy = undefined;
+  }
+
+  sellSsdBuddy() {
+    this.byteBuddies.ssdBuddies.splice(this.byteBuddies.ssdBuddies.findIndex(b =>
+      b.xPos === this.selectedSsdBuddy.xPos &&
+      b.yPos === this.selectedSsdBuddy.yPos &&
+      b.age === this.selectedSsdBuddy.age), 1);
+    this.byteBuddies.byteCoins += this.selectedSsdBuddy.sellPrice;
+    this.snackbarService.showToast('Sold ' + this.selectedSsdBuddy.name + ' for ' + this.selectedSsdBuddy.sellPrice + 'bytc', 2500);
+    this.selectedSsdBuddy = undefined;
   }
 
   sellAllBuddies(worthDouble: boolean) {
@@ -440,20 +478,28 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   collectBuddy(buddy: Buddy) {
     this.byteBuddies.goldenBits -= buddy.collectCost;
-    const bought = { ...buddy };
-    bought.age = 0;
-    bought.xPos = Math.floor(Math.random() * 375);
-    bought.yPos = Math.floor(Math.random() * 475);
-    this.byteBuddies.ssdBuddies.push(bought);
+    this.byteBuddies.ssdBuddies.push(
+      this.byteBuddies.buddies.splice(
+        this.byteBuddies.buddies.findIndex(b => +buddy.age === +b.age && buddy.name === b.name &&
+          buddy.evolution === b.evolution && +b.xPos === +buddy.xPos && +b.yPos === +buddy.yPos), 1)[0]);
   }
 
   cloneChange(value: any) {
-    if (this.cloneBuddy) {
+    this.cloneBuddy = undefined;
+    this.cloneStats = undefined;
+    if (value && value.evolution !== '') {
+      this.cloneBuddy = value;
       this.cloneStats = new CloneStats();
       this.cloneStats.buddy = this.cloneBuddy;
-      this.cloneStats.byteCoinCost = 1;
-      this.cloneStats.goldenBitCost = 1;
+      this.cloneStats.byteCoinCost = this.cloneBuddy.sellPrice * 5;
+      this.cloneStats.goldenBitCost = this.cloneBuddy.collectCost * 5;
     }
+  }
+
+  clonedBuddy() {
+    this.byteBuddies.byteCoins -= this.cloneStats.byteCoinCost;
+    this.byteBuddies.goldenBits -= this.cloneStats.goldenBitCost;
+    this.getBuddy(this.cloneBuddy, this.cloneBuddy.evolution);
   }
 
   breed1Change(value: any) {
@@ -535,6 +581,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       this.getBuddy(this.allBuddies.find(b => b.name === 'Dragonbyte'), '');
 
     } else if (chance > (100 - this.breedStats.evolveChance) / 100) {
+      parent.collectCost *= 2;
       if (parent.evolution === '') {
         evolution = 'Kilo';
       } else if (parent.evolution === 'Kilo') {
@@ -552,6 +599,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       this.getBuddy(parent, parent.evolution);
 
     } else {
+      parent.collectCost /= 2;
       if (parent.evolution === 'Kilo') {
         evolution = '';
       } else if (parent.evolution === 'Mega') {
