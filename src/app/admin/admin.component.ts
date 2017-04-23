@@ -42,7 +42,8 @@ export class AdminComponent implements OnInit {
       'ID': this.ID,
       'description': this.description,
       'byteReward': this.byteReward,
-      'goldReward': this.goldReward
+      'goldReward': this.goldReward,
+      'image': this.image
     });
   }
 
