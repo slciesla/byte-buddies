@@ -13,4 +13,5 @@ export class Buddy {
       requiredCPU: number;
       height: number;
       width: number;
+      evolution = '';
 }

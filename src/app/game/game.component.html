@@ -9,7 +9,7 @@
           <canvas #hddCanvas width="{{canvasWidth}}" height="{{canvasHeight}}" style="background: #AAAAAA; border:2px solid #666666;"></canvas>
           <div style="width: 100%">
             <button style="float: left; margin: 4px 4px 0 0;" kendoButton (click)="sellAllBuddies(false)" [primary]="true">Sell All Mature</button>
-            <button style="float: left; margin: 4px 4px 0 0;" kendoButton (click)="sellAllBuddies(true)" [primary]="true">Sell All Worth 2x Base Price</button>
+            <button style="float: left; margin: 4px 4px 0 0;" kendoButton (click)="sellAllBuddies(true)" [primary]="true">Sell All Worth 2x Base</button>
             <div style="float: left; font-size: 12px;">
               <div>{{currEggs}} / {{byteBuddies.ram?.capacity}} Eggs</div>
               <div>{{byteBuddies.buddies.length}} / {{byteBuddies.hdd?.capacity}} Buddies</div>
@@ -17,7 +17,7 @@
           </div>
           <div *ngIf="selectedBuddy" class="tile" style="float: left; width: 95%">
             <div class="tile-title">Selected Buddy</div>
-            <div>Name: {{selectedBuddy.name}}</div>
+            <div>Name: {{selectedBuddy.evolution + selectedBuddy.name}}</div>
             <div>Age: {{selectedBuddy.age}}</div>
             <div>Sell Price: {{selectedBuddy.sellPrice}}</div>
             <button kendoButton (click)="sellBuddy()" [primary]="true" [disabled]="selectedBuddy.sellPrice === 0">Sell?</button>
@@ -55,6 +55,8 @@
             </kendo-tabstrip-tab>
             <kendo-tabstrip-tab [title]="'Cloning'">
               <ng-template kendoTabContent>
+                <kendo-dropdownlist [data]="byteBuddies.buddies" [value]="cloneBuddy" [textField]="'name' + 'age'" [valueField]="'value'">
+                </kendo-dropdownlist>
               </ng-template>
             </kendo-tabstrip-tab>
             <kendo-tabstrip-tab [title]="'Breeding'">
@@ -143,13 +145,16 @@
       </kendo-tabstrip-tab>
       <kendo-tabstrip-tab [title]="'Help'">
         <ng-template kendoTabContent>
-          <div>Buy Byte Buddies as eggs, hatch them and raise them and sell them when they're older to turn a profit!</div>
-          <div>Golden Bits have a chance to drop when hatching a buddy equal to 1/10th of their cost.</div>
-          <div>Golden Bits can be used to populate your SSD or for cloning fish in your HDD.</div>
-          <div>Upgrading your HDD increases the number of buddies you can have at once.</div>
-          <div>Upgrading your CPU allows you to purchase different buddies.</div>
-          <div>Upgrading your GPU raises how far you can breed your buddies.</div>
-          <div>Upgrading your RAM allows more eggs to be hatching at once.</div>
+          <ul>
+          <li>Buy Byte Buddies as eggs, hatch them and raise them and sell them when they're older to turn a profit!</li>
+          <li>Golden Bits have a chance to drop when hatching a buddy equal to 1/10th of their cost.</li>
+          <li>Golden Bits can be used to populate your SSD or for cloning fish in your HDD.</li>
+          <li>Upgrading your HDD increases the number of buddies you can have at once.</li>
+          <li>Upgrading your CPU allows you to purchase different buddies.</li>
+          <li>Upgrading your GPU raises how far you can breed your buddies.</li>
+          <li>Upgrading your RAM allows more eggs to be hatching at once.</li>
+          <li>Sell All doesn't sell any evolved buddies.</li>
+          </ul>
         </ng-template>
       </kendo-tabstrip-tab>
       <kendo-tabstrip-tab [title]="'Options'">

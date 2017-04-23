@@ -23,6 +23,7 @@
     "@angular/platform-browser-dynamic": "^4.0.0",
     "@angular/router": "^4.0.0",
     "@progress/kendo-angular-buttons": "^0.24.0",
+    "@progress/kendo-angular-dropdowns": "^0.39.3",
     "@progress/kendo-angular-l10n": "^0.3.0",
     "@progress/kendo-angular-layout": "^0.24.2",
     "@progress/kendo-theme-default": "^2.31.3",

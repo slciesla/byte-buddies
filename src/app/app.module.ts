@@ -5,6 +5,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule, Routes } from '@angular/router';
 import { ButtonsModule } from '@progress/kendo-angular-buttons';
+import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
+// import { DropDownListModule } from '@progress/kendo-angular-dropdowns';
 import { LayoutModule } from '@progress/kendo-angular-layout';
 import {
   MdlDialogOutletModule,
@@ -52,6 +54,8 @@ export const firebaseConfig = {
     routing,
     ButtonsModule,
     ReactiveFormsModule,
+    DropDownsModule,
+    // DropDownListModule,
     LayoutModule,
     MdlDialogOutletModule,
     MdlSnackbaModule,
