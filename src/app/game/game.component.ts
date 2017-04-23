@@ -77,6 +77,8 @@ export class GameComponent implements OnInit, AfterViewInit {
       const nextIndex = cpus.findIndex(c => c.name === this.byteBuddies.cpu.name) + 1;
       if (nextIndex < cpus.length) {
         this.nextCpu = cpus[nextIndex];
+      } else {
+        this.nextCpu = undefined;
       }
     });
 
@@ -91,6 +93,8 @@ export class GameComponent implements OnInit, AfterViewInit {
       const nextIndex = hdds.findIndex(c => c.name === this.byteBuddies.hdd.name) + 1;
       if (nextIndex < hdds.length) {
         this.nextHdd = hdds[nextIndex];
+      } else {
+        this.nextHdd = undefined;
       }
     });
 
@@ -105,6 +109,8 @@ export class GameComponent implements OnInit, AfterViewInit {
       const nextIndex = gpus.findIndex(c => c.name === this.byteBuddies.gpu.name) + 1;
       if (nextIndex < gpus.length) {
         this.nextGpu = gpus[nextIndex];
+      } else {
+        this.nextGpu = undefined;
       }
     });
 
@@ -119,6 +125,8 @@ export class GameComponent implements OnInit, AfterViewInit {
       const nextIndex = rams.findIndex(c => c.name === this.byteBuddies.ram.name) + 1;
       if (nextIndex < rams.length) {
         this.nextRam = rams[nextIndex];
+      } else {
+        this.nextRam = undefined;
       }
     });
 
@@ -173,6 +181,8 @@ export class GameComponent implements OnInit, AfterViewInit {
     const nextIndex = this.allCpus.findIndex(c => c.name === this.byteBuddies.cpu.name) + 1;
     if (nextIndex < this.allCpus.length) {
       this.nextCpu = this.allCpus[nextIndex];
+    } else {
+      this.nextCpu = undefined;
     }
   }
 
@@ -181,6 +191,8 @@ export class GameComponent implements OnInit, AfterViewInit {
     const nextIndex = this.allHdds.findIndex(c => c.name === this.byteBuddies.hdd.name) + 1;
     if (nextIndex < this.allHdds.length) {
       this.nextHdd = this.allHdds[nextIndex];
+    } else {
+      this.nextHdd = undefined;
     }
   }
 
@@ -189,6 +201,8 @@ export class GameComponent implements OnInit, AfterViewInit {
     const nextIndex = this.allGpus.findIndex(c => c.name === this.byteBuddies.gpu.name) + 1;
     if (nextIndex < this.allGpus.length) {
       this.nextGpu = this.allGpus[nextIndex];
+    } else {
+      this.nextGpu = undefined;
     }
   }
 
@@ -197,6 +211,8 @@ export class GameComponent implements OnInit, AfterViewInit {
     const nextIndex = this.allRams.findIndex(c => c.name === this.byteBuddies.ram.name) + 1;
     if (nextIndex < this.allRams.length) {
       this.nextRam = this.allRams[nextIndex];
+    } else {
+      this.nextRam = undefined;
     }
   }
 
