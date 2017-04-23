@@ -18,3 +18,28 @@
 .tile-title {
     font-size: 2em;
 }
+
+.achievement-box {
+    border: 1px solid saddlebrown;
+    background-color: antiquewhite;
+    margin-bottom: 2px;
+    opacity: 0.5;
+}
+
+.achievement-title {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: 16px;
+}
+
+.achievement-desc {
+    font-style: italic;
+    display: none;
+}
+
+.achieved {
+    opacity: 1;
+}
+
+.achieved-desc {
+    display: inherit;
+}

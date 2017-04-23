@@ -1,4 +1,5 @@
 <div style="margin-left: auto; margin-right: auto; width: 980px;">
+  <p-growl [value]="toasts"></p-growl>
   <div class="header">
     Byte Buddies - {{byteBuddies?.byteCoins}} ByteCoins - <span class="golden-bits">{{byteBuddies?.goldenBits}} Golden Bits</span>
   </div>
@@ -45,7 +46,7 @@
     </div>
     <div style="min-width: 420px;">
       <kendo-tabstrip style="max-width: 550px">
-        <kendo-tabstrip-tab [title]="'Byte Buddies'" [selected]="true">
+        <kendo-tabstrip-tab [title]="'Byte Buddies'">
           <ng-template kendoTabContent>
             <kendo-tabstrip>
               <kendo-tabstrip-tab [title]="'Purchase Eggs'" [selected]="true">
@@ -186,15 +187,34 @@
               <div *ngIf="byteBuddies.stats.length === 0">
                 You don't have any stats?
               </div>
-              <span class="mdl-grid" style="padding: 0; font-size: 12px; line-height: 12px;" *ngFor="let stat of byteBuddies.stats">
-            <span class="mdl-cell mdl-cell--6-col" style="padding: 0; margin: 4px;">{{stat.name}}:</span>
-              <span class="mdl-cell mdl-cell--6-col" style="padding: 0; margin: 4px;">{{stat.value}}</span>
-              </span>
+              <div class="mdl-grid" style="padding: 0; font-size: 12px; line-height: 12px;" *ngFor="let stat of byteBuddies.stats">
+                <div class="mdl-cell mdl-cell--6-col" style="padding: 0; margin: 4px;">{{stat.name}}:</div>
+                <div class="mdl-cell mdl-cell--6-col" style="padding: 0; margin: 4px;">{{stat.value}}</div>
+              </div>
             </div>
           </ng-template>
         </kendo-tabstrip-tab>
-        <kendo-tabstrip-tab [title]="'Achievements'">
+        <kendo-tabstrip-tab [title]="'Achievements'" [selected]="true">
           <ng-template kendoTabContent>
+            <div style="height: 494px; overflow-y: automatic;">
+              <div *ngFor="let chiev of allAchievements">
+                <div class="mdl-grid achievement-box" [ngClass]="{'achieved': checkAchievement(chiev.ID)}" style="padding: 0; font-size: 12px; line-height: 12px;">
+                  <div style="width: 50px; padding-right: 5px;">
+                  </div>
+                  <div style="width: calc(100% - 55px);">
+                    <div class="mdl-grid">
+                      <div class="mdl-cell mdl-cell--12-col achievement-title" style="padding: 0; margin: 4px;">{{chiev.name2}}</div>
+                      <div class="mdl-cell mdl-cell--6-col" style="padding: 0; margin: 4px;">
+                        <span class="achievement-desc" [ngClass]="{'achieved-desc': checkAchievement(chiev.ID)}">{{chiev.description}}</span>
+                      </div>
+                      <div class="mdl-cell mdl-cell--3-col" style="padding: 0; margin: 4px;">
+                        Reward: {{chiev.byteReward ? chiev.byteReward : 0}}bytc <span class="golden-bits">{{chiev.goldReward ? chiev.goldReward : 0}}gb</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </ng-template>
         </kendo-tabstrip-tab>
         <kendo-tabstrip-tab [title]="'Help'">
