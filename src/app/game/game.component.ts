@@ -161,6 +161,9 @@ export class GameComponent implements OnInit, AfterViewInit {
         };
         return +a.type < +b.type ? -1 : 1;
       });
+      this.allAchievements.forEach(a => {
+        a.image = 'assets/' + a.type + '.png';
+      });
     });
   }
 
