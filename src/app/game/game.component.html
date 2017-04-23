@@ -2,7 +2,7 @@
   Byte Buddies - {{byteBuddies?.byteCoins}} ByteCoins - <span class="golden-bits">{{byteBuddies?.goldenBits}} Golden Bits</span>
 </div>
 <div style="min-height: 575px;">
-  <div style="width: 421px; float: left; padding-right: 6px;">
+  <div style="width: 425px; float: left; padding-right: 6px;">
     <kendo-tabstrip [keepTabContent]="true">
       <kendo-tabstrip-tab [title]="'Hard Drive'" [selected]="true">
         <ng-template kendoTabContent>
@@ -20,7 +20,11 @@
             <div>Name: {{selectedBuddy.evolution + selectedBuddy.name}}</div>
             <div>Age: {{selectedBuddy.age}}</div>
             <div>Sell Price: {{selectedBuddy.sellPrice}}</div>
-            <button kendoButton (click)="sellBuddy()" [primary]="true" [disabled]="selectedBuddy.sellPrice === 0">Sell?</button>
+            <button kendoButton (click)="sellBuddy()" [primary]="true" [disabled]="selectedBuddy.sellPrice === 0">Sell</button>
+            <button kendoButton (click)="collectBuddy(selectedBuddy)" [disabled]="selectedBuddy.collectCost > byteBuddies.goldenBits"
+              class="golden-bits">
+              Collect in SSD for {{selectedBuddy.collectCost}}gb
+            </button>
           </div>
         </ng-template>
       </kendo-tabstrip-tab>
@@ -31,6 +35,8 @@
             <div class="tile-title">Selected Buddy</div>
             <div>Name: {{selectedSsdBuddy.name}}</div>
             <div>Age: {{selectedSsdBuddy.age}}</div>
+            <div>Sell Price: {{selectedSsdBuddy.sellPrice}}</div>
+            <button kendoButton (click)="sellSsdBuddy()" [primary]="true" [disabled]="selectedSsdBuddy.sellPrice === 0">Sell (No gb refund)</button>
           </div>
         </ng-template>
       </kendo-tabstrip-tab>
@@ -48,7 +54,6 @@
                   <div>
                     <button kendoButton (click)="buyBuddy(buddy)" [primary]="true" [disabled]="buddy.initCost > byteBuddies.byteCoins ||
                       currEggs === byteBuddies.ram?.capacity || byteBuddies.buddies.length === byteBuddies.hdd.capacity">Buy for {{buddy.initCost}}bytc</button>
-                      <button kendoButton (click)="collectBuddy(buddy)" [disabled]="buddy.collectCost > byteBuddies.goldenBits" class="golden-bits">Collect in SSD for {{buddy.collectCost}}gb</button>
                   </div>
                 </div>
               </ng-template>
@@ -64,9 +69,9 @@
                       Select 2 byte buddies to breed them. BOTH WILL BE LOST WHEN BRED - Be sure to clone if you want to keep him!
                     </div>
                     <kendo-dropdownlist [data]="byteBuddies.buddies" [ngModel]="breedBuddy1" [textField]="'fullName'" [valueField]="'age'" (selectionChange)="breed1Change($event)">
-                  </kendo-dropdownlist>
-                  <kendo-dropdownlist [data]="byteBuddies.buddies" [ngModel]="breedBuddy2" [textField]="'fullName'" [valueField]="'age'" (selectionChange)="breed2Change($event)">
-                  </kendo-dropdownlist>
+                    </kendo-dropdownlist>
+                    <kendo-dropdownlist [data]="byteBuddies.buddies" [ngModel]="breedBuddy2" [textField]="'fullName'" [valueField]="'age'" (selectionChange)="breed2Change($event)">
+                    </kendo-dropdownlist>
                     <br />
                     <div *ngIf="breedStats">
                       <div>Evolve Chance: {{breedStats.evolveChance}}%</div>
