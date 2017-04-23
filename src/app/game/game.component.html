@@ -10,7 +10,7 @@
           <div style="width: 100%">
             <button style="float: left; margin: 4px 4px 0 0;" kendoButton (click)="sellAllBuddies(false)" [primary]="true">Sell All Mature</button>
             <button style="float: left; margin: 4px 4px 0 0;" kendoButton (click)="sellAllBuddies(true)" [primary]="true">Sell All Worth 2x Base</button>
-            <div style="float: left; font-size: 12px;">
+            <div style="float: left; font-size: 14px;">
               <div>{{currEggs}} / {{byteBuddies.ram?.capacity}} Eggs</div>
               <div>{{byteBuddies.buddies.length}} / {{byteBuddies.hdd?.capacity}} Buddies</div>
             </div>
@@ -19,7 +19,7 @@
             <div class="tile-title">Selected Buddy</div>
             <div>Name: {{selectedBuddy.evolution + selectedBuddy.name}}</div>
             <div>Age: {{selectedBuddy.age}}</div>
-            <div>Sell Price: {{selectedBuddy.sellPrice}}</div>
+            <div>Sell Price: {{selectedBuddy.sellPrice}}bytc</div>
             <button kendoButton (click)="sellBuddy()" [primary]="true" [disabled]="selectedBuddy.sellPrice === 0">Sell</button>
             <button kendoButton (click)="collectBuddy(selectedBuddy)" [disabled]="selectedBuddy.collectCost > byteBuddies.goldenBits"
               class="golden-bits">
@@ -35,7 +35,7 @@
             <div class="tile-title">Selected Buddy</div>
             <div>Name: {{selectedSsdBuddy.name}}</div>
             <div>Age: {{selectedSsdBuddy.age}}</div>
-            <div>Sell Price: {{selectedSsdBuddy.sellPrice}}</div>
+            <div>Sell Price: {{selectedSsdBuddy.sellPrice}}bytc</div>
             <button kendoButton (click)="sellSsdBuddy()" [primary]="true" [disabled]="selectedSsdBuddy.sellPrice === 0">Sell (No gb refund)</button>
           </div>
         </ng-template>
@@ -44,7 +44,7 @@
   </div>
   <div style="min-width: 420px;">
     <kendo-tabstrip>
-      <kendo-tabstrip-tab [title]="'Byte Buddies'" [selected]="true">
+      <kendo-tabstrip-tab [title]="'Byte Buddies'">
         <ng-template kendoTabContent>
           <kendo-tabstrip>
             <kendo-tabstrip-tab [title]="'Purchase Eggs'" [selected]="true">
@@ -87,7 +87,8 @@
               <ng-template kendoTabContent>
                 <div style="min-height: 494px">
                   <div>
-                    The cloning technology only works on evolved Buddies. Select one to see the costs to clone. You can't clone past the egg or buddy limit.
+                    The cloning technology only works on evolved Buddies. Select one to see the costs to clone. You can't clone past the egg
+                    or buddy limit.
                   </div>
                   <kendo-dropdownlist [data]="byteBuddies.buddies" [ngModel]="cloneBuddy" [textField]="'fullName'" [valueField]="'age'" (selectionChange)="cloneChange($event)">
                   </kendo-dropdownlist>
@@ -106,6 +107,9 @@
       </kendo-tabstrip-tab>
       <kendo-tabstrip-tab [title]="'Upgrades'">
         <ng-template kendoTabContent>
+          <div *ngIf="!nextHdd && !nextGpu && !nextCpu && !nextRam">
+            You've purchased all of the upgrades!
+          </div>
           <div class="tile" *ngIf="nextHdd">
             <div class="mdl-grid">
               <div class="mdl-cell mdl-cell--6-col">
@@ -173,8 +177,17 @@
           </div>
         </ng-template>
       </kendo-tabstrip-tab>
-      <kendo-tabstrip-tab [title]="'Stats'">
+      <kendo-tabstrip-tab [title]="'Stats'" [selected]="true">
         <ng-template kendoTabContent>
+          <div style="height: 494px; overflow-y: automatic;">
+            <div *ngIf="byteBuddies.stats.length === 0">
+              You don't have any stats?
+            </div>
+            <span class="mdl-grid" style="padding: 0; font-size: 12px; line-height: 12px;" *ngFor="let stat of byteBuddies.stats">
+            <span class="mdl-cell mdl-cell--6-col" style="padding: 0; margin: 4px;">{{stat.name}}:</span>
+            <span class="mdl-cell mdl-cell--6-col" style="padding: 0; margin: 4px;">{{stat.value}}</span>
+            </span>
+          </div>
         </ng-template>
       </kendo-tabstrip-tab>
       <kendo-tabstrip-tab [title]="'Achievements'">

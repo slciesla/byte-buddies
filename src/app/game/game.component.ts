@@ -6,6 +6,7 @@ import { Buddy } from '../models/buddy';
 import { ComputerComponent } from '../models/computer-component';
 import { BreedStats } from '../models/breed-stats';
 import { CloneStats } from '../models/clone-stats';
+import { Stat } from '../models/stat';
 
 @Component({
   selector: 'app-game',
@@ -53,7 +54,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     let newGame = true;
     if (localStorage.getItem('byteBuddies')) {
       newGame = false;
-      this.byteBuddies = JSON.parse(localStorage.getItem('byteBuddies'));
+      this.byteBuddies = JSON.parse(this.decryptSave(localStorage.getItem('byteBuddies')));
       this.snackbarService.showToast('Game Loaded', 2500);
       this.currEggs = this.byteBuddies.buddies.filter(b => b.age < b.matureTime).length;
     } else {
@@ -62,6 +63,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       this.byteBuddies.goldenBits = 0;
       this.byteBuddies.buddies = new Array<Buddy>();
       this.byteBuddies.ssdBuddies = new Array<Buddy>();
+      this.byteBuddies.stats = new Array<Stat>();
     }
     this.af.database.list('/buddies/').subscribe((buddies: Buddy[]) => {
       if (!this.allBuddies) {
@@ -191,8 +193,27 @@ export class GameComponent implements OnInit, AfterViewInit {
     }
   }
 
+  private encryptSave = function (str) {
+    let retval = '';
+    let i = 0;
+    while (i !== str.length) {
+      retval += str.charCodeAt(i++).toString(16);
+    }
+    return retval;
+  };
+
+  private decryptSave = function (str) {
+    let retval = '';
+    let i = 0;
+    while (i !== str.length) {
+      retval += String.fromCharCode(parseInt(str.substr(i, 2), 16));
+      i += 2;
+    }
+    return retval;
+  };
+
   saveGame() {
-    localStorage.setItem('byteBuddies', JSON.stringify(this.byteBuddies));
+    localStorage.setItem('byteBuddies', this.encryptSave(JSON.stringify(this.byteBuddies)));
     this.snackbarService.showToast('Game Saved', 1000);
   }
 
@@ -203,6 +224,8 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   buyCpu() {
+    this.incrementStat('Upgrades Bought (Total)');
+    this.incrementStat('Upgrades Bought (CPU)');
     this.byteBuddies.byteCoins -= +this.nextCpu.cost;
     this.byteBuddies.cpu = this.nextCpu;
     this.purchaseableBuddies = this.allBuddies.filter(b => +b.requiredCPU <= +this.byteBuddies.cpu.level);
@@ -215,6 +238,8 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   buyHdd() {
+    this.incrementStat('Upgrades Bought (Total)');
+    this.incrementStat('Upgrades Bought (HDD)');
     this.byteBuddies.byteCoins -= +this.nextHdd.cost;
     this.byteBuddies.hdd = this.nextHdd;
     const nextIndex = this.allHdds.findIndex(c => c.name === this.byteBuddies.hdd.name) + 1;
@@ -226,6 +251,8 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   buyGpu() {
+    this.incrementStat('Upgrades Bought (Total)');
+    this.incrementStat('Upgrades Bought (GPU)');
     this.byteBuddies.byteCoins -= +this.nextGpu.cost;
     this.byteBuddies.gpu = this.nextGpu;
     const nextIndex = this.allGpus.findIndex(c => c.name === this.byteBuddies.gpu.name) + 1;
@@ -237,6 +264,8 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   buyRam() {
+    this.incrementStat('Upgrades Bought (Total)');
+    this.incrementStat('Upgrades Bought (RAM)');
     this.byteBuddies.byteCoins -= +this.nextRam.cost;
     this.byteBuddies.ram = this.nextRam;
     const nextIndex = this.allRams.findIndex(c => c.name === this.byteBuddies.ram.name) + 1;
@@ -256,6 +285,8 @@ export class GameComponent implements OnInit, AfterViewInit {
       const img = new Image();
       if (buddy.age === +buddy.matureTime) {
         this.currEggs--;
+        this.incrementStat('Eggs Hatched (Total)');
+        this.incrementStat('Eggs Hatched (' + buddy.fullName + ')');
       }
       if (buddy.age > buddy.matureTime - 2 && buddy.age <= buddy.matureTime) {
         buddy.img = 'assets/eggcracking.png';
@@ -282,13 +313,13 @@ export class GameComponent implements OnInit, AfterViewInit {
       if (buddy.age > buddy.matureTime) {
         let mod = 15;
         if (buddy.evolution === 'Kilo') {
-          mod = 12;
+          mod = 13;
         } else if (buddy.evolution === 'Mega') {
-          mod = 9;
+          mod = 11;
         } else if (buddy.evolution === 'Giga') {
-          mod = 6;
+          mod = 9;
         } else if (buddy.evolution === 'Tera') {
-          mod = 3;
+          mod = 7;
         }
         buddy.width = Math.floor(img.width / mod);
         buddy.height = Math.floor(img.height / mod);
@@ -385,9 +416,15 @@ export class GameComponent implements OnInit, AfterViewInit {
     if (type === 'hdd') {
       this.selectedBuddy = this.byteBuddies.buddies.find(b =>
         b.xPos < x && x < b.xPos + b.width && b.yPos < y && y < b.yPos + b.height);
+      if (this.selectedBuddy) {
+        this.incrementStat('Buddies Selected (In HDD)');
+      }
     } else if (type === 'ssd') {
       this.selectedSsdBuddy = this.byteBuddies.ssdBuddies.find(b =>
         b.xPos < x && x < b.xPos + b.width && b.yPos < y && y < b.yPos + b.height);
+      if (this.selectedSsdBuddy) {
+        this.incrementStat('Buddies Selected (In SSD)');
+      }
     }
   }
 
@@ -408,6 +445,8 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   sellBuddy() {
+    this.incrementStat('Buddies Sold (Total)');
+    this.incrementStat('Buddies Sold (' + this.selectedBuddy.fullName + ')');
     this.byteBuddies.buddies.splice(this.byteBuddies.buddies.findIndex(b =>
       b.xPos === this.selectedBuddy.xPos &&
       b.yPos === this.selectedBuddy.yPos &&
@@ -425,6 +464,8 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   sellSsdBuddy() {
+    this.incrementStat('Collected Buddies Sold');
+    this.incrementStat('Collected Buddies Sold (' + this.selectedSsdBuddy.fullName + ')');
     this.byteBuddies.ssdBuddies.splice(this.byteBuddies.ssdBuddies.findIndex(b =>
       b.xPos === this.selectedSsdBuddy.xPos &&
       b.yPos === this.selectedSsdBuddy.yPos &&
@@ -442,6 +483,8 @@ export class GameComponent implements OnInit, AfterViewInit {
     const totalBuddies = buddiesToSell.length;
     if (buddiesToSell.length > 0) {
       buddiesToSell.forEach(b => {
+        this.incrementStat('Buddies Sold');
+        this.incrementStat('Buddies Sold (' + b.fullName + ')');
         this.byteBuddies.buddies.splice(this.byteBuddies.buddies.findIndex(b2 =>
           b2.xPos === b.xPos && b2.yPos === b.yPos && b2.age === b.age), 1);
         this.byteBuddies.byteCoins += b.sellPrice;
@@ -461,6 +504,8 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   buyBuddy(buddy: Buddy) {
+    this.incrementStat('Buddies Bought (Total)');
+    this.incrementStat('Buddies Bought (' + buddy.name + ')');
     this.byteBuddies.byteCoins -= buddy.initCost;
     this.getBuddy(buddy, '');
   }
@@ -477,6 +522,8 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   collectBuddy(buddy: Buddy) {
+    this.incrementStat('Buddies Collected (Total)');
+    this.incrementStat('Buddies Collected (' + buddy.name + ')');
     this.byteBuddies.goldenBits -= buddy.collectCost;
     this.byteBuddies.ssdBuddies.push(
       this.byteBuddies.buddies.splice(
@@ -497,6 +544,8 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   clonedBuddy() {
+    this.incrementStat('Buddies Cloned (Total)');
+    this.incrementStat('Buddies Cloned (' + this.cloneBuddy.name + ')');
     this.byteBuddies.byteCoins -= this.cloneStats.byteCoinCost;
     this.byteBuddies.goldenBits -= this.cloneStats.goldenBitCost;
     this.getBuddy(this.cloneBuddy, this.cloneBuddy.evolution);
@@ -573,6 +622,8 @@ export class GameComponent implements OnInit, AfterViewInit {
     const parent = Math.random() > 0.5 ? { ...this.breedBuddy1 } : { ...this.breedBuddy2 };
     this.breedBuddy1 = undefined;
     this.breedBuddy2 = undefined;
+    this.incrementStat('Buddies Bred (Total)');
+    this.incrementStat('Buddies Bred (' + parent.name + ')');
 
     this.breedList = new Array<Buddy>(...this.byteBuddies.buddies);
     let evolution = '';
@@ -591,6 +642,8 @@ export class GameComponent implements OnInit, AfterViewInit {
       } else if (parent.evolution === 'Giga') {
         evolution = 'Tera';
       }
+      this.incrementStat('Buddies Evolved (Total)');
+      this.incrementStat('Buddies Evolved (' + parent.name + ')');
       this.snackbarService.showToast('You evolved a ' + evolution + parent.name + '!');
       this.getBuddy(parent, evolution);
 
@@ -609,10 +662,28 @@ export class GameComponent implements OnInit, AfterViewInit {
       } else if (parent.evolution === 'Tera') {
         evolution = 'Giga';
       }
+      this.incrementStat('Buddies Devolved (Total)');
+      this.incrementStat('Buddies Devolved (' + parent.name + ')');
       this.snackbarService.showToast('You bred a devolved ' + evolution + parent.name + '. :-(');
       this.getBuddy(parent, evolution);
     }
     this.breedStats = undefined;
+  }
+
+  incrementStat(name: string) {
+    let stat = this.byteBuddies.stats.find(s => s.name === name);
+    if (!stat) {
+      stat = new Stat();
+      stat.name = name;
+      stat.value = 1;
+      this.byteBuddies.stats.push(stat);
+      this.byteBuddies.stats = this.byteBuddies.stats.sort((a, b) => {
+        if (a.name === b.name) { return 0; };
+        return a.name < b.name ? -1 : 1;
+      });
+    } else {
+      stat.value++;
+    }
   }
 
   // Jeremys Code
