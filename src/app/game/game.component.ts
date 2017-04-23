@@ -4,6 +4,8 @@ import { AngularFire, FirebaseListObservable } from 'angularfire2';
 import { ByteBuddies } from '../models/byte-buddies';
 import { Buddy } from '../models/buddy';
 import { ComputerComponent } from '../models/computer-component';
+import { BreedStats } from '../models/breed-stats';
+import { CloneStats } from '../models/clone-stats';
 
 @Component({
   selector: 'app-game',
@@ -34,6 +36,10 @@ export class GameComponent implements OnInit, AfterViewInit {
   nextRam: ComputerComponent;
   currEggs: number;
   cloneBuddy: Buddy;
+  cloneStats: CloneStats;
+  breedBuddy1: Buddy;
+  breedBuddy2: Buddy;
+  breedStats: BreedStats;
 
   // Jeremys Code
 
@@ -427,7 +433,29 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   cloneChange(value: any) {
-    console.log(value);
+    if (this.cloneBuddy) {
+      this.cloneStats = new CloneStats();
+      this.cloneStats.buddy = this.cloneBuddy;
+      this.cloneStats.byteCoinCost = 1;
+      this.cloneStats.goldenBitCost = 1;
+    }
+  }
+
+  breedChange(value: any) {
+    if (this.breedBuddy1 &&
+      this.breedBuddy2 &&
+      this.breedBuddy1.age === this.breedBuddy2.age &&
+      this.breedBuddy1.name === this.breedBuddy2.name) {
+      this.breedBuddy2 = undefined;
+      this.snackbarService.showToast('You have to select 2 different Buddies', 5000);
+    } else {
+      this.breedStats = new BreedStats();
+      this.breedStats.buddy1 = this.breedBuddy1;
+      this.breedStats.buddy2 = this.breedBuddy2;
+      this.breedStats.evolveChance = 50;
+      this.breedStats.sameChance = 25;
+      this.breedStats.devolveChance = 24;
+    }
   }
 
   // Jeremys Code
