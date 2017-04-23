@@ -57,9 +57,9 @@ export class AdminComponent implements OnInit {
 
   Save2() {
     const toSend = this.af.database.list(`/achievements/`);
-    toSend.push(this.form.value).key;
+    toSend.push(this.form2.value).key;
     this.snackbarService.showToast('Created ' + this.name2.value, 1500);
-    this.form.reset();
+    this.form2.reset();
   }
 
   constructor(public fb: FormBuilder, public af: AngularFire, private snackbarService: MdlSnackbarService) { }
